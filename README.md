@@ -1,1 +1,1 @@
-# Blender-Plugin-Playground
+# Afanasy Pools Addin
