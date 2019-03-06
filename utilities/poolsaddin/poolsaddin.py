@@ -7,6 +7,33 @@ from Qt import QtCore, QtGui, QtWidgets
 
 import cgruutils
 
+# Create Pool Window / Modal Form
+class CreatePoolDialog(QtWidgets.QDialog):
+    def __init__(self, parent=None):
+        super(CreatePoolDialog, self).__init__(parent)
+
+        self.setWindowTitle("Create Pool")
+
+        # Window icon
+        iconpath = cgruutils.getIconFileName('afanasy')
+        if iconpath is not None:
+            self.setWindowIcon(QtGui.QIcon(iconpath))
+
+        self.setFixedSize(400, 60)
+        self.setModal(True)
+
+        poolNameLineEdit = QtWidgets.QLineEdit()
+        poolNameLineEdit.setPlaceholderText("Pool name")
+
+        createPoolButton = QtWidgets.QPushButton("Create Pool")
+
+        topLayout = QtWidgets.QHBoxLayout(self)
+        topLayout.addWidget(poolNameLineEdit)
+        topLayout.addWidget(createPoolButton)
+    
+    def createPool(self):
+        pass
+
 # MainWindow class
 class MainWindow(QtWidgets.QWidget):
     def __init__(self):
@@ -27,6 +54,8 @@ class MainWindow(QtWidgets.QWidget):
         poolsList.addItem("Pool 1")
 
         createPoolButton = QtWidgets.QPushButton("Create")
+        createPoolButton.clicked.connect(self.showCreatePoolDialog)
+
         deletePoolButton = QtWidgets.QPushButton("Delete")
         editPoolButton = QtWidgets.QPushButton("Edit")
 
@@ -45,8 +74,8 @@ class MainWindow(QtWidgets.QWidget):
         clientsList = QtWidgets.QListWidget()
         clientsList.addItem("Client 01")
 
-        addClientButton = QtWidgets.QPushButton("Add")
-        removeClientButton = QtWidgets.QPushButton("Remove")
+        addClientButton = QtWidgets.QPushButton("Add Client")
+        removeClientButton = QtWidgets.QPushButton("Remove Client")
 
         clientsButtonLayout = QtWidgets.QHBoxLayout()
         clientsButtonLayout.addWidget(addClientButton)
@@ -64,10 +93,12 @@ class MainWindow(QtWidgets.QWidget):
         # Top Root Layout
         topLayout = QtWidgets.QVBoxLayout(self)
         topLayout.addLayout(listsLayout)
+    
+    def showCreatePoolDialog(self):
+        self.createPoolDialog = CreatePoolDialog()
+        self.createPoolDialog.exec_()
 
 app = QtWidgets.QApplication(sys.argv)
-
 window = MainWindow()
 window.show()
-
 sys.exit(app.exec_())
