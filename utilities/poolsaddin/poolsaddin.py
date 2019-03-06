@@ -1,4 +1,8 @@
-# UTF-8
+# Encoding: UTF-8
+# Author: Laurence Trippen
+# Date: 06.03.2019
+# E-Mail: laurence.trippen@gmail.com
+# Program: Afanasy Pool Manager
 
 import os
 import sys
@@ -11,7 +15,9 @@ import cgruutils
 class CreatePoolDialog(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super(CreatePoolDialog, self).__init__(parent)
+        self.initUI()
 
+    def initUI(self):
         self.setWindowTitle("Create Pool")
 
         # Window icon
@@ -22,14 +28,17 @@ class CreatePoolDialog(QtWidgets.QDialog):
         self.setFixedSize(400, 60)
         self.setModal(True)
 
-        poolNameLineEdit = QtWidgets.QLineEdit()
-        poolNameLineEdit.setPlaceholderText("Pool name")
+        self.poolNameLineEdit = QtWidgets.QLineEdit()
+        self.poolNameLineEdit.setPlaceholderText("Pool name")
 
-        createPoolButton = QtWidgets.QPushButton("Create Pool")
+        self.createPoolButton = QtWidgets.QPushButton("Create Pool")
 
-        topLayout = QtWidgets.QHBoxLayout(self)
-        topLayout.addWidget(poolNameLineEdit)
-        topLayout.addWidget(createPoolButton)
+        self.topLayout = QtWidgets.QHBoxLayout(self)
+        self.topLayout.addWidget(self.poolNameLineEdit)
+        self.topLayout.addWidget(self.createPoolButton)
+
+    def getPoolName(self):
+        return self.poolNameLineEdit.text()
     
     def createPool(self):
         pass
@@ -38,7 +47,9 @@ class CreatePoolDialog(QtWidgets.QDialog):
 class MainWindow(QtWidgets.QWidget):
     def __init__(self):
         QtWidgets.QWidget.__init__(self)
-        
+        self.initUI()
+
+    def initUI(self):
         # Window Title
         self.setWindowTitle('Afanasy Pool Manager   CGRU %s' %
                             os.getenv('CGRU_VERSION', ''))
@@ -48,57 +59,57 @@ class MainWindow(QtWidgets.QWidget):
         if iconpath is not None:
             self.setWindowIcon(QtGui.QIcon(iconpath))
 
-        poolsLabel = QtWidgets.QLabel("Pools")
+        self.poolsLabel = QtWidgets.QLabel("Pools")
 
-        poolsList = QtWidgets.QListWidget()
-        poolsList.addItem("Pool 1")
+        self.poolsList = QtWidgets.QListWidget()
 
-        createPoolButton = QtWidgets.QPushButton("Create")
-        createPoolButton.clicked.connect(self.showCreatePoolDialog)
+        self.createPoolButton = QtWidgets.QPushButton("Create")
+        self.createPoolButton.clicked.connect(self.showCreatePoolDialog)
 
-        deletePoolButton = QtWidgets.QPushButton("Delete")
-        editPoolButton = QtWidgets.QPushButton("Edit")
+        self.deletePoolButton = QtWidgets.QPushButton("Delete")
+        self.editPoolButton = QtWidgets.QPushButton("Edit")
 
-        poolsButtonLayout = QtWidgets.QHBoxLayout()
-        poolsButtonLayout.addWidget(createPoolButton)
-        poolsButtonLayout.addWidget(editPoolButton)
-        poolsButtonLayout.addWidget(deletePoolButton)
+        self.poolsButtonLayout = QtWidgets.QHBoxLayout()
+        self.poolsButtonLayout.addWidget(self.createPoolButton)
+        self.poolsButtonLayout.addWidget(self.editPoolButton)
+        self.poolsButtonLayout.addWidget(self.deletePoolButton)
 
-        poolsLayout = QtWidgets.QVBoxLayout()
-        poolsLayout.addWidget(poolsLabel)
-        poolsLayout.addWidget(poolsList)
-        poolsLayout.addLayout(poolsButtonLayout)
+        self.poolsLayout = QtWidgets.QVBoxLayout()
+        self.poolsLayout.addWidget(self.poolsLabel)
+        self.poolsLayout.addWidget(self.poolsList)
+        self.poolsLayout.addLayout(self.poolsButtonLayout)
 
-        clientsLabel = QtWidgets.QLabel("Clients")
+        self.clientsLabel = QtWidgets.QLabel("Clients")
         
-        clientsList = QtWidgets.QListWidget()
-        clientsList.addItem("Client 01")
+        self.clientsList = QtWidgets.QListWidget()
 
-        addClientButton = QtWidgets.QPushButton("Add Client")
-        removeClientButton = QtWidgets.QPushButton("Remove Client")
+        self.addClientButton = QtWidgets.QPushButton("Add Client")
+        self.removeClientButton = QtWidgets.QPushButton("Remove Client")
 
-        clientsButtonLayout = QtWidgets.QHBoxLayout()
-        clientsButtonLayout.addWidget(addClientButton)
-        clientsButtonLayout.addWidget(removeClientButton)
+        self.clientsButtonLayout = QtWidgets.QHBoxLayout()
+        self.clientsButtonLayout.addWidget(self.addClientButton)
+        self.clientsButtonLayout.addWidget(self.removeClientButton)
 
-        clientsLayout = QtWidgets.QVBoxLayout()
-        clientsLayout.addWidget(clientsLabel)
-        clientsLayout.addWidget(clientsList)
-        clientsLayout.addLayout(clientsButtonLayout)
+        self.clientsLayout = QtWidgets.QVBoxLayout()
+        self.clientsLayout.addWidget(self.clientsLabel)
+        self.clientsLayout.addWidget(self.clientsList)
+        self.clientsLayout.addLayout(self.clientsButtonLayout)
 
-        listsLayout = QtWidgets.QHBoxLayout()
-        listsLayout.addLayout(poolsLayout)
-        listsLayout.addLayout(clientsLayout)
+        self.listsLayout = QtWidgets.QHBoxLayout()
+        self.listsLayout.addLayout(self.poolsLayout)
+        self.listsLayout.addLayout(self.clientsLayout)
 
         # Top Root Layout
-        topLayout = QtWidgets.QVBoxLayout(self)
-        topLayout.addLayout(listsLayout)
+        self.topLayout = QtWidgets.QVBoxLayout(self)
+        self.topLayout.addLayout(self.listsLayout)
     
     def showCreatePoolDialog(self):
-        self.createPoolDialog = CreatePoolDialog()
-        self.createPoolDialog.exec_()
+        text, ok = QtGui.QInputDialog.getText(self, 'Create Pool', 'Pool Name')
+        if ok:
+            self.poolsList.addItem(str(text))
 
-app = QtWidgets.QApplication(sys.argv)
-window = MainWindow()
-window.show()
-sys.exit(app.exec_())
+if __name__ == "__main__":
+    app = QtWidgets.QApplication(sys.argv)
+    window = MainWindow()
+    window.show()
+    sys.exit(app.exec_())
