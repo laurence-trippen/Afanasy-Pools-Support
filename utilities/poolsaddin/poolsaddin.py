@@ -8,6 +8,7 @@ import os
 import sys
 
 from Qt import QtCore, QtGui, QtWidgets
+from model import *
 
 import cgruutils
 
@@ -49,6 +50,7 @@ class MainWindow(QtWidgets.QWidget):
         QtWidgets.QWidget.__init__(self)
         self.initUI()
 
+    # UI Initialization
     def initUI(self):
         # Window Title
         self.setWindowTitle('Afanasy Pool Manager   CGRU %s' %
@@ -82,6 +84,12 @@ class MainWindow(QtWidgets.QWidget):
         self.clientsLabel = QtWidgets.QLabel("Clients")
         
         self.clientsList = QtWidgets.QListWidget()
+
+        """
+        clients = AF_API.request_renderclients()
+        for client in clients:
+            self.clientsList.addItem(client.hostname)
+        """
 
         self.addClientButton = QtWidgets.QPushButton("Add Client")
         self.removeClientButton = QtWidgets.QPushButton("Remove Client")
