@@ -10,7 +10,10 @@ import sys
 from Qt import QtCore, QtGui, QtWidgets
 from model import *
 
+import db
 import cgruutils
+
+dbConnection = None
 
 # Create Pool Window / Modal Form
 class CreatePoolDialog(QtWidgets.QDialog):
@@ -116,7 +119,13 @@ class MainWindow(QtWidgets.QWidget):
         if ok:
             self.poolsList.addItem(str(text))
 
+def init():
+    dbConnection = db.MongoDBConnector()
+    dbConnection.connect("mongodb://192.168.1.107:27017")
+
 if __name__ == "__main__":
+    init()
+
     app = QtWidgets.QApplication(sys.argv)
     window = MainWindow()
     window.show()

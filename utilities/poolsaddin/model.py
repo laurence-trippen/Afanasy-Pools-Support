@@ -24,6 +24,5 @@ class AF_API():
             address = client['address']
             ip = address['ip']
             port = address['port']
-
             client_list.append(AF_RenderClient(name, version, ip, port))
         return client_list
