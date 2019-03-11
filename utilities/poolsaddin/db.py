@@ -7,6 +7,8 @@
 import pymongo
 from model import AF_RenderPool, AF_RenderClient
 
+connection = None
+
 class MongoDBConnector():
     db_name = "afpools"
     col_name = "pools"
@@ -15,16 +17,22 @@ class MongoDBConnector():
         pass
 
     def connect(self, connection):
-        pool1 = AF_RenderPool("Standard Pool")
-        pool1.clients.append(AF_RenderClient("lt-pc-01", "CGRU 2.2.3", "127.0.0.1", "27017"))
-        pool1.clients.append(AF_RenderClient("lt-pc-02", "CGRU 2.2.3", "192.168.0.101", "27017"))
+        try:
+            self.client = pymongo.MongoClient(connection)
+            print("DB connection established!")
+        except:
+            print("DB connection failed!")
 
-        self.client = pymongo.MongoClient(connection)
         self.afpools_db = self.client[MongoDBConnector.db_name]
         self.pools_col = self.afpools_db[MongoDBConnector.col_name]
-        
-        x = self.pools_col.insert_one(self.poolToJSON(pool1))
-        print(x.inserted_id)
+        self.pools_col.create_index("name", unique=True)
+
+    def insertPool(self, pool):
+        try:
+            result = self.pools_col.insert_one(self.poolToJSON(pool))
+            return result.matched_count > 0
+        except pymongo.errors.PyMongoError as e:
+            return False, e
 
     def poolToJSON(self, pool):
         poolDict = {

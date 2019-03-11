@@ -9,20 +9,14 @@ import db
 
 from Qt import QtWidgets
 from ui import MainWindow
-from model import AF_API
 from config import Config
 
-dbConnection = None
-
 def init():
-    dbConnection = db.MongoDBConnector()
-    dbConnection.connect("mongodb://192.168.1.107:27017")
-
     Config.check()
     Config.load()
 
-    print(Config.mongodb_host)
-    print(Config.mongodb_port)
+    db.connection = db.MongoDBConnector()
+    db.connection.connect("mongodb://" + Config.mongodb_host + ":" + str(Config.mongodb_port))
 
 if __name__ == "__main__":
     init()

@@ -5,42 +5,11 @@
 # Program: Afanasy Pool Manager - User Interface
 
 import os
+import db
 import cgruutils
 
 from Qt import QtCore, QtGui, QtWidgets
-from model import AF_API
-
-# Create Pool Window / Modal Form
-class CreatePoolDialog(QtWidgets.QDialog):
-    def __init__(self, parent=None):
-        super(CreatePoolDialog, self).__init__(parent)
-        self.initUI()
-
-    def initUI(self):
-        self.setWindowTitle("Create Pool")
-
-        # Window icon
-        iconpath = cgruutils.getIconFileName('afanasy')
-        if iconpath is not None:
-            self.setWindowIcon(QtGui.QIcon(iconpath))
-
-        self.setFixedSize(400, 60)
-        self.setModal(True)
-
-        self.poolNameLineEdit = QtWidgets.QLineEdit()
-        self.poolNameLineEdit.setPlaceholderText("Pool name")
-
-        self.createPoolButton = QtWidgets.QPushButton("Create Pool")
-
-        self.topLayout = QtWidgets.QHBoxLayout(self)
-        self.topLayout.addWidget(self.poolNameLineEdit)
-        self.topLayout.addWidget(self.createPoolButton)
-
-    def getPoolName(self):
-        return self.poolNameLineEdit.text()
-    
-    def createPool(self):
-        pass
+from model import AF_API, AF_RenderPool
 
 # MainWindow class
 class MainWindow(QtWidgets.QWidget):
@@ -128,4 +97,10 @@ class MainWindow(QtWidgets.QWidget):
     def showCreatePoolDialog(self):
         text, ok = QtGui.QInputDialog.getText(self, 'Create Pool', 'Pool Name')
         if ok:
-            self.poolsList.addItem(str(text))
+            result, e = db.connection.insertPool(AF_RenderPool(text))
+            if result == True:
+                self.poolsList.addItem(str(text))
+            else:
+                msgBox = QtGui.QMessageBox()
+                msgBox.setText(str(e))
+                msgBox.exec_()
