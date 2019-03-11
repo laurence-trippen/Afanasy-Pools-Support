@@ -52,10 +52,6 @@ class MainWindow(QtWidgets.QWidget):
         
         self.clientsList = QtWidgets.QListWidget()
 
-        clients = AF_API.request_renderclients()
-        for client in clients:
-            self.clientsList.addItem(client.hostname)
-
         self.addClientButton = QtWidgets.QPushButton("Add Client")
         self.removeClientButton = QtWidgets.QPushButton("Remove Client")
 
@@ -78,6 +74,7 @@ class MainWindow(QtWidgets.QWidget):
 
         # Inits the MenuBar
         self.initMenuBar()
+        self.loadAndFillPools()
 
     def initMenuBar(self):
         exitAction = QtGui.QAction(QtGui.QIcon('exit.png'), '&Exit', self)
@@ -93,6 +90,11 @@ class MainWindow(QtWidgets.QWidget):
         self.settingsMenu = self.menubar.addMenu('Settings')
 
         self.topLayout.setMenuBar(self.menubar)
+
+    def loadAndFillPools(self):
+        pools = db.connection.findAllPools()
+        for pool in pools:
+            print(pool)
     
     def showCreatePoolDialog(self):
         text, ok = QtGui.QInputDialog.getText(self, 'Create Pool', 'Pool Name')

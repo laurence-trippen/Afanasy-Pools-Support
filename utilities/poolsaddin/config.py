@@ -1,6 +1,6 @@
 # Encoding: UTF-8
 # Author: Laurence Trippen
-# Date: 06.03.2019
+# Date: 11.03.2019
 # E-Mail: laurence.trippen@gmail.com
 # Program: Afanasy Pool Manager - Config
 

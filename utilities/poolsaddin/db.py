@@ -1,6 +1,6 @@
 # Encoding: UTF-8
 # Author: Laurence Trippen
-# Date: 06.03.2019
+# Date: 11.03.2019
 # E-Mail: laurence.trippen@gmail.com
 # Program: Afanasy Pool Manager - MongoDB Access
 
@@ -29,26 +29,47 @@ class MongoDBConnector():
 
     def insertPool(self, pool):
         try:
-            result = self.pools_col.insert_one(self.poolToJSON(pool))
+            result = self.pools_col.insert_one(self.convertPool(pool))
             return { "acknowledged" : result.acknowledged, "e" : None }
         except pymongo.errors.PyMongoError as e:
             return { "acknowledged" : False, "e" : e }
 
-    def poolToJSON(self, pool):
-        poolDict = {
-            "name" : pool.name
-        }
-        clients = []
-        for client in pool.clients:
-            clients.append(self.clientToJSON(client))
-        poolDict["clients"] = clients
-        return poolDict
+    def findAllPools(self):
+        col = self.pools_col
+        pools = []
+        for pool in col.find():
+            pools.append(self.convertPool(pool))
+        return pools
 
-    def clientToJSON(self, client):
-        clientDict = {
-            "hostname": client.hostname,
-            "engine": client.engine,
-            "ip": client.ip,
-            "port": client.port
-        }
-        return clientDict
+    def convertPool(self, pool):
+        if isinstance(pool, AF_RenderPool):
+            poolDict = {
+                "name" : pool.name
+            }
+            clients = []
+            for client in pool.clients:
+                clients.append(self.convertClient(client))
+            poolDict["clients"] = clients
+            return poolDict
+        elif isinstance(pool, dict):
+            renderpool = AF_RenderPool(pool["name"])
+            for client in pool["clients"]:
+                renderpool.clients.append(self.convertClient(client))
+            return pool
+            
+    def convertClient(self, client):
+        if isinstance(client, AF_RenderClient):
+            clientDict = {
+                "hostname": client.hostname,
+                "engine": client.engine,
+                "ip": client.ip,
+                "port": client.port
+            }
+            return clientDict
+        elif isinstance(client, dict):
+            return AF_RenderClient(
+                client["hostname"],
+                client["engine"],
+                client["ip"],
+                client["port"]
+            )
