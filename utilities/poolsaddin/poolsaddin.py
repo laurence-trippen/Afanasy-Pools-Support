@@ -113,6 +113,20 @@ class MainWindow(QtWidgets.QWidget):
         # Top Root Layout
         self.topLayout = QtWidgets.QVBoxLayout(self)
         self.topLayout.addLayout(self.listsLayout)
+
+        # Inits the MenuBar
+        self.initMenuBar()
+
+    def initMenuBar(self):
+        exitAction = QtGui.QAction(QtGui.QIcon('exit.png'), '&Exit', self)
+        exitAction.setShortcut('Ctrl+Q')
+        exitAction.setStatusTip('Exit application')
+        exitAction.triggered.connect(self.close)
+
+        self.menubar = QtGui.QMenuBar()
+        self.fileMenu = self.menubar.addMenu('File')
+        self.fileMenu.addAction(exitAction)
+        self.topLayout.setMenuBar(self.menubar)
     
     def showCreatePoolDialog(self):
         text, ok = QtGui.QInputDialog.getText(self, 'Create Pool', 'Pool Name')
