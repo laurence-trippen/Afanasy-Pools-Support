@@ -30,9 +30,9 @@ class MongoDBConnector():
     def insertPool(self, pool):
         try:
             result = self.pools_col.insert_one(self.poolToJSON(pool))
-            return result.matched_count > 0
+            return { "acknowledged" : result.acknowledged, "e" : None }
         except pymongo.errors.PyMongoError as e:
-            return False, e
+            return { "acknowledged" : False, "e" : e }
 
     def poolToJSON(self, pool):
         poolDict = {

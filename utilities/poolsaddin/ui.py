@@ -97,10 +97,10 @@ class MainWindow(QtWidgets.QWidget):
     def showCreatePoolDialog(self):
         text, ok = QtGui.QInputDialog.getText(self, 'Create Pool', 'Pool Name')
         if ok:
-            result, e = db.connection.insertPool(AF_RenderPool(text))
-            if result == True:
+            result = db.connection.insertPool(AF_RenderPool(text))
+            if result["acknowledged"]:
                 self.poolsList.addItem(str(text))
             else:
                 msgBox = QtGui.QMessageBox()
-                msgBox.setText(str(e))
+                msgBox.setText(str(result["e"]))
                 msgBox.exec_()
