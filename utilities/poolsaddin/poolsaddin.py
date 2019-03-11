@@ -2,13 +2,14 @@
 # Author: Laurence Trippen
 # Date: 06.03.2019
 # E-Mail: laurence.trippen@gmail.com
-# Program: Afanasy Pool Manager
+# Program: Afanasy Pool Manager - Main
 
 import os
 import sys
 
 from Qt import QtCore, QtGui, QtWidgets
-from model import *
+from model import AF_API
+from config import Config
 
 import db
 import cgruutils
@@ -124,8 +125,12 @@ class MainWindow(QtWidgets.QWidget):
         exitAction.triggered.connect(self.close)
 
         self.menubar = QtGui.QMenuBar()
+
         self.fileMenu = self.menubar.addMenu('File')
         self.fileMenu.addAction(exitAction)
+
+        self.settingsMenu = self.menubar.addMenu('Settings')
+
         self.topLayout.setMenuBar(self.menubar)
     
     def showCreatePoolDialog(self):
@@ -136,6 +141,12 @@ class MainWindow(QtWidgets.QWidget):
 def init():
     dbConnection = db.MongoDBConnector()
     dbConnection.connect("mongodb://192.168.1.107:27017")
+
+    Config.check()
+    Config.load()
+
+    print(Config.mongodb_host)
+    print(Config.mongodb_port)
 
 if __name__ == "__main__":
     init()

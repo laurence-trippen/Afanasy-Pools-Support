@@ -1,3 +1,9 @@
+# Encoding: UTF-8
+# Author: Laurence Trippen
+# Date: 06.03.2019
+# E-Mail: laurence.trippen@gmail.com
+# Program: Afanasy Pool Manager - Model Classes
+
 import af
 
 class AF_RenderClient():
