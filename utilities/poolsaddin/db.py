@@ -33,6 +33,13 @@ class MongoDBConnector():
             return { "acknowledged" : result.acknowledged, "e" : None }
         except pymongo.errors.PyMongoError as e:
             return { "acknowledged" : False, "e" : e }
+    
+    def deletePool(self, poolName):
+        try:
+            result = self.pools_col.delete_one({ "name" : poolName })
+            return { "acknowledged" : result.acknowledged, "e" : None }
+        except pymongo.errors.PyMongoError as e:
+            return { "acknowledged" : result.acknowledged, "e" : e }
 
     def findAllPools(self):
         pools = []

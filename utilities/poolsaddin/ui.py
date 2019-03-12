@@ -31,11 +31,14 @@ class MainWindow(QtWidgets.QWidget):
         self.poolsLabel = QtWidgets.QLabel("Pools")
 
         self.poolsList = QtWidgets.QListWidget()
+        # self.poolsList.selectionModel().setCurrentIndex(self.poolsList.model().index(1,1), QtGui.QItemSelectionModel.SelectionFlag.Select)
 
         self.createPoolButton = QtWidgets.QPushButton("Create")
         self.createPoolButton.clicked.connect(self.showCreatePoolDialog)
 
         self.deletePoolButton = QtWidgets.QPushButton("Delete")
+        self.deletePoolButton.clicked.connect(self.showDeletePoolDialog)
+
         self.editPoolButton = QtWidgets.QPushButton("Edit")
 
         self.poolsButtonLayout = QtWidgets.QHBoxLayout()
@@ -110,3 +113,14 @@ class MainWindow(QtWidgets.QWidget):
             msgBox = QtGui.QMessageBox()
             msgBox.setText("Pool name is empty!")
             msgBox.exec_()
+
+    def showDeletePoolDialog(self):
+        currentItem = self.poolsList.currentItem()
+        flags = QtGui.QMessageBox.StandardButton.Yes
+        flags |= QtGui.QMessageBox.StandardButton.No
+        question = "Do you realy want to delete the pool '" + currentItem.text() + "'?"
+        response = QtGui.QMessageBox.question(self, "Question", question, flags)
+        if response == QtGui.QMessageBox.Yes:
+            result = db.connection.deletePool(currentItem.text())
+            if result["acknowledged"]:
+                self.poolsList.takeItem(self.poolsList.currentRow())
