@@ -40,6 +40,7 @@ class MainWindow(QtWidgets.QWidget):
         self.deletePoolButton.clicked.connect(self.showDeletePoolDialog)
 
         self.editPoolButton = QtWidgets.QPushButton("Edit")
+        self.editPoolButton.clicked.connect(self.showEditPoolDialog)
 
         self.poolsButtonLayout = QtWidgets.QHBoxLayout()
         self.poolsButtonLayout.addWidget(self.createPoolButton)
@@ -113,6 +114,19 @@ class MainWindow(QtWidgets.QWidget):
             msgBox = QtGui.QMessageBox()
             msgBox.setText("Pool name is empty!")
             msgBox.exec_()
+
+    def showEditPoolDialog(self):
+        currentItem = self.poolsList.currentItem()
+        text, ok = QtGui.QInputDialog.getText(self, "New Pool Name", "New Pool Name", text=currentItem.text())
+        if ok and str(text) != "":
+            result = db.connection.updatePoolName(currentItem.text(), text)
+            if result["acknowledged"]:
+                currentItem.setText(text)
+                self.poolsList.editItem(currentItem)
+            else:
+                msgBox = QtGui.QMessageBox()
+                msgBox.setText(str(result["e"]))
+                msgBox.exec_()
 
     def showDeletePoolDialog(self):
         currentItem = self.poolsList.currentItem()

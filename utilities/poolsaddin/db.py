@@ -41,6 +41,13 @@ class MongoDBConnector():
         except pymongo.errors.PyMongoError as e:
             return { "acknowledged" : result.acknowledged, "e" : e }
 
+    def updatePoolName(self, oldPoolName, newPoolName):
+        try:
+            result = self.pools_col.update_one({ "name" : oldPoolName }, {"$set" : { "name" : newPoolName }})
+            return { "acknowledged" : result.acknowledged, "e" : None }
+        except pymongo.errors.PyMongoError as e:
+            return { "acknowledged" : result.acknowledged, "e" : e }
+
     def findAllPools(self):
         pools = []
         for pool in self.pools_col.find():
