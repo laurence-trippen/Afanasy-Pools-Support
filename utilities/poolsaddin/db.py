@@ -35,9 +35,8 @@ class MongoDBConnector():
             return { "acknowledged" : False, "e" : e }
 
     def findAllPools(self):
-        col = self.pools_col
         pools = []
-        for pool in col.find():
+        for pool in self.pools_col.find():
             pools.append(self.convertPool(pool))
         return pools
 
@@ -53,9 +52,10 @@ class MongoDBConnector():
             return poolDict
         elif isinstance(pool, dict):
             renderpool = AF_RenderPool(pool["name"])
-            for client in pool["clients"]:
+            dictClients = pool["clients"]
+            for client in dictClients:
                 renderpool.clients.append(self.convertClient(client))
-            return pool
+            return renderpool
             
     def convertClient(self, client):
         if isinstance(client, AF_RenderClient):

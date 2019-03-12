@@ -94,11 +94,11 @@ class MainWindow(QtWidgets.QWidget):
     def loadAndFillPools(self):
         pools = db.connection.findAllPools()
         for pool in pools:
-            print(pool)
+            self.poolsList.addItem(pool.name)
     
     def showCreatePoolDialog(self):
         text, ok = QtGui.QInputDialog.getText(self, 'Create Pool', 'Pool Name')
-        if ok:
+        if ok and str(text) != "":
             result = db.connection.insertPool(AF_RenderPool(text))
             if result["acknowledged"]:
                 self.poolsList.addItem(str(text))
@@ -106,3 +106,7 @@ class MainWindow(QtWidgets.QWidget):
                 msgBox = QtGui.QMessageBox()
                 msgBox.setText(str(result["e"]))
                 msgBox.exec_()
+        else:
+            msgBox = QtGui.QMessageBox()
+            msgBox.setText("Pool name is empty!")
+            msgBox.exec_()
