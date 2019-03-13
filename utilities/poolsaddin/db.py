@@ -12,6 +12,7 @@ connection = None
 class MongoDBConnector():
     db_name = "afpools"
     col_name = "pools"
+    status = None
 
     def __init__(self):
         pass
@@ -19,9 +20,9 @@ class MongoDBConnector():
     def connect(self, connection):
         try:
             self.client = pymongo.MongoClient(connection)
-            print("DB connection established!")
+            MongoDBConnector.status = ">> Database connection established."
         except:
-            print("DB connection failed!")
+            MongoDBConnector.status = ">> Database connection failed."
 
         self.afpools_db = self.client[MongoDBConnector.db_name]
         self.pools_col = self.afpools_db[MongoDBConnector.col_name]

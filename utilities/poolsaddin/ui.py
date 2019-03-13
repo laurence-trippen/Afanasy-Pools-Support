@@ -9,7 +9,7 @@ import db
 import cgruutils
 
 from Qt import QtCore, QtGui, QtWidgets
-from model import AF_API, AF_RenderPool
+from model import AF_API, AF_RenderPool, AF_RenderClient
 
 # MainWindow class
 class MainWindow(QtWidgets.QWidget):
@@ -29,7 +29,6 @@ class MainWindow(QtWidgets.QWidget):
             self.setWindowIcon(QtGui.QIcon(iconpath))
 
         self.poolsLabel = QtWidgets.QLabel("Pools")
-
         self.poolsList = QtWidgets.QListWidget()
         # self.poolsList.selectionModel().setCurrentIndex(self.poolsList.model().index(1,1), QtGui.QItemSelectionModel.SelectionFlag.Select)
 
@@ -53,8 +52,8 @@ class MainWindow(QtWidgets.QWidget):
         self.poolsLayout.addLayout(self.poolsButtonLayout)
 
         self.clientsLabel = QtWidgets.QLabel("Clients")
-        
         self.clientsList = QtWidgets.QListWidget()
+        self.clientsList.itemClicked.connect(self.onItemClicked)
 
         self.addClientButton = QtWidgets.QPushButton("Add Client")
         self.removeClientButton = QtWidgets.QPushButton("Remove Client")
@@ -78,6 +77,7 @@ class MainWindow(QtWidgets.QWidget):
 
         # Inits the MenuBar
         self.initMenuBar()
+        self.initStatusBar()
         self.loadAndFillPools()
 
     def initMenuBar(self):
@@ -87,23 +87,29 @@ class MainWindow(QtWidgets.QWidget):
         exitAction.triggered.connect(self.close)
 
         self.menubar = QtGui.QMenuBar()
-
         self.fileMenu = self.menubar.addMenu('File')
         self.fileMenu.addAction(exitAction)
-
         self.settingsMenu = self.menubar.addMenu('Settings')
-
+        self.helpMenu = self.menubar.addMenu('?')
         self.topLayout.setMenuBar(self.menubar)
+    
+    def initStatusBar(self):
+        self.statusbar = QtGui.QStatusBar()
+        self.statusbar.showMessage(db.MongoDBConnector.status)
+        self.topLayout.addWidget(self.statusbar)
 
     def loadAndFillPools(self):
-        pools = db.connection.findAllPools()
-        for pool in pools:
+        self.pools = db.connection.findAllPools()
+        for pool in self.pools:
             self.poolsList.addItem(pool.name)
     
     def showCreatePoolDialog(self):
         text, ok = QtGui.QInputDialog.getText(self, 'Create Pool', 'Pool Name')
         if ok and str(text) != "":
-            result = db.connection.insertPool(AF_RenderPool(text))
+            pool = AF_RenderPool(text)
+            pool.clients.append(AF_RenderClient("lt-pc-01", "", "", ""))
+            pool.clients.append(AF_RenderClient("lt-pc-02", "", "", ""))
+            result = db.connection.insertPool(pool)
             if result["acknowledged"]:
                 self.poolsList.addItem(str(text))
             else:
@@ -138,3 +144,9 @@ class MainWindow(QtWidgets.QWidget):
             result = db.connection.deletePool(currentItem.text())
             if result["acknowledged"]:
                 self.poolsList.takeItem(self.poolsList.currentRow())
+    
+    def onItemClicked(self, item):
+        for pool in self.pools:
+            if pool.name == item.text():
+                for client in pool.clients:
+                    self.clientsList.addItem(client.hostname)
