@@ -30,6 +30,7 @@ class MainWindow(QtWidgets.QWidget):
 
         self.poolsLabel = QtWidgets.QLabel("Pools")
         self.poolsList = QtWidgets.QListWidget()
+        self.poolsList.itemClicked.connect(self.onItemClicked)
         # self.poolsList.selectionModel().setCurrentIndex(self.poolsList.model().index(1,1), QtGui.QItemSelectionModel.SelectionFlag.Select)
 
         self.createPoolButton = QtWidgets.QPushButton("Create")
@@ -53,9 +54,10 @@ class MainWindow(QtWidgets.QWidget):
 
         self.clientsLabel = QtWidgets.QLabel("Clients")
         self.clientsList = QtWidgets.QListWidget()
-        self.clientsList.itemClicked.connect(self.onItemClicked)
 
-        self.addClientButton = QtWidgets.QPushButton("Add Client")
+        self.addClientButton = QtWidgets.QPushButton("Add Client(s)")
+        self.addClientButton.clicked.connect(self.showAddClientWindow)
+
         self.removeClientButton = QtWidgets.QPushButton("Remove Client")
 
         self.clientsButtonLayout = QtWidgets.QHBoxLayout()
@@ -144,9 +146,31 @@ class MainWindow(QtWidgets.QWidget):
             result = db.connection.deletePool(currentItem.text())
             if result["acknowledged"]:
                 self.poolsList.takeItem(self.poolsList.currentRow())
+
+    def showAddClientWindow(self):
+        self.addClientWindow = AddClientWindow()
+        self.addClientWindow.show()
     
     def onItemClicked(self, item):
         for pool in self.pools:
             if pool.name == item.text():
+                self.clientsList.clear()
                 for client in pool.clients:
                     self.clientsList.addItem(client.hostname)
+
+class AddClientWindow(QtWidgets.QWidget):
+    def __init__(self):
+        QtWidgets.QWidget.__init__(self)
+        self.initUI()
+
+    # UI Initialization
+    def initUI(self):
+        self.setWindowModality(QtCore.Qt.ApplicationModal)
+
+        # Window Title
+        self.setWindowTitle("Add Client(s)")
+        
+        # Window icon
+        iconpath = cgruutils.getIconFileName('afanasy')
+        if iconpath is not None:
+            self.setWindowIcon(QtGui.QIcon(iconpath))
