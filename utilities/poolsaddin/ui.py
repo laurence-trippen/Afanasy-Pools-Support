@@ -165,6 +165,7 @@ class AddClientWindow(QtWidgets.QWidget):
 
     # UI Initialization
     def initUI(self):
+        self.setFixedSize(470, 300)
         self.setWindowModality(QtCore.Qt.ApplicationModal)
 
         # Window Title
@@ -174,3 +175,34 @@ class AddClientWindow(QtWidgets.QWidget):
         iconpath = cgruutils.getIconFileName('afanasy')
         if iconpath is not None:
             self.setWindowIcon(QtGui.QIcon(iconpath))
+
+        self.addHostnameButton = QtWidgets.QPushButton("+")
+        self.remHostnameButton = QtWidgets.QPushButton("-")
+        self.hostnamesButtonsLayout = QtWidgets.QHBoxLayout()
+        self.hostnamesButtonsLayout.addWidget(self.addHostnameButton)
+        self.hostnamesButtonsLayout.addWidget(self.remHostnameButton)
+
+        self.hostnamesList = QtWidgets.QListWidget()
+        self.hostnamesLayout = QtWidgets.QVBoxLayout()
+        self.hostnamesLayout.addWidget(self.hostnamesList)
+        self.hostnamesLayout.addLayout(self.hostnamesButtonsLayout)
+
+        self.hostnamesGroupBox = QtWidgets.QGroupBox("Hostnames")
+        self.hostnamesGroupBox.setLayout(self.hostnamesLayout)
+
+        self.clientsList = QtWidgets.QListWidget()
+        self.clientsLayout = QtWidgets.QVBoxLayout()
+        self.clientsLayout.addWidget(self.clientsList)
+
+        self.clientsGroupBox = QtWidgets.QGroupBox("Afanasy Clients")
+        self.clientsGroupBox.setLayout(self.clientsLayout)
+       
+        self.groupBoxesLayout = QtWidgets.QHBoxLayout()
+        self.groupBoxesLayout.addWidget(self.clientsGroupBox)
+        self.groupBoxesLayout.addWidget(self.hostnamesGroupBox)
+
+        self.saveButton = QtWidgets.QPushButton("Save")
+
+        self.topLayout = QtWidgets.QVBoxLayout(self)
+        self.topLayout.addLayout(self.groupBoxesLayout)
+        self.topLayout.addWidget(self.saveButton)
