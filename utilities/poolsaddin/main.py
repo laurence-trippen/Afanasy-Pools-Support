@@ -4,6 +4,7 @@
 # E-Mail: laurence.trippen@gmail.com
 # Program: Afanasy Pool Manager - Main
 
+import os
 import sys
 import db
 
@@ -11,16 +12,19 @@ from Qt import QtWidgets
 from ui import MainWindow
 from config import Config
 
-def init():
+if __name__ == "__main__":
+    if "CGRU_LOCATION" in os.environ:
+        print("CGRU_LOCATION=" + os.environ['CGRU_LOCATION'])
+    else:
+        print("CGRU_LOCATION is not set!")
+        sys.exit()
+
     Config.check()
     Config.load()
 
     db.connection = db.MongoDBConnector()
     db.connection.connect("mongodb://" + Config.mongodb_host + ":" + str(Config.mongodb_port))
-
-if __name__ == "__main__":
-    init()
-
+    
     app = QtWidgets.QApplication(sys.argv)
     window = MainWindow()
     window.show()

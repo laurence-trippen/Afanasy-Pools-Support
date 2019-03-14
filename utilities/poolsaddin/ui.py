@@ -15,6 +15,7 @@ from model import AF_API, AF_RenderPool, AF_RenderClient
 class MainWindow(QtWidgets.QWidget):
     def __init__(self):
         QtWidgets.QWidget.__init__(self)
+        self.selected_pool = None
         self.initUI()
 
     # UI Initialization
@@ -148,20 +149,28 @@ class MainWindow(QtWidgets.QWidget):
                 self.poolsList.takeItem(self.poolsList.currentRow())
 
     def showAddClientWindow(self):
-        self.addClientWindow = AddClientWindow()
-        self.addClientWindow.show()
+        if self.selected_pool != None:
+            self.addClientWindow = AddClientWindow(self.selected_pool)
+            self.addClientWindow.show()
+        else:
+            msgBox = QtGui.QMessageBox()
+            msgBox.setText("No pool selected!")
+            msgBox.exec_()
     
     def onItemClicked(self, item):
         for pool in self.pools:
             if pool.name == item.text():
+                self.selected_pool = pool
                 self.clientsList.clear()
                 for client in pool.clients:
                     self.clientsList.addItem(client.hostname)
 
 class AddClientWindow(QtWidgets.QWidget):
-    def __init__(self):
+    def __init__(self, selected_pool):
         QtWidgets.QWidget.__init__(self)
+        self.selected_pool = selected_pool
         self.initUI()
+        self.loadAFClients()
 
     # UI Initialization
     def initUI(self):
@@ -176,8 +185,8 @@ class AddClientWindow(QtWidgets.QWidget):
         if iconpath is not None:
             self.setWindowIcon(QtGui.QIcon(iconpath))
 
-        self.addHostnameButton = QtWidgets.QPushButton("+")
-        self.remHostnameButton = QtWidgets.QPushButton("-")
+        self.addHostnameButton = QtWidgets.QPushButton("(+) Hostname")
+        self.remHostnameButton = QtWidgets.QPushButton("(-) Hostname")
         self.hostnamesButtonsLayout = QtWidgets.QHBoxLayout()
         self.hostnamesButtonsLayout.addWidget(self.addHostnameButton)
         self.hostnamesButtonsLayout.addWidget(self.remHostnameButton)
@@ -190,7 +199,10 @@ class AddClientWindow(QtWidgets.QWidget):
         self.hostnamesGroupBox = QtWidgets.QGroupBox("Hostnames")
         self.hostnamesGroupBox.setLayout(self.hostnamesLayout)
 
-        self.clientsList = QtWidgets.QListWidget()
+        self.clientsList = QtWidgets.QListView()
+        self.clientsModel = QtGui.QStandardItemModel(self.clientsList)
+        self.clientsList.setModel(self.clientsModel)
+
         self.clientsLayout = QtWidgets.QVBoxLayout()
         self.clientsLayout.addWidget(self.clientsList)
 
@@ -206,3 +218,18 @@ class AddClientWindow(QtWidgets.QWidget):
         self.topLayout = QtWidgets.QVBoxLayout(self)
         self.topLayout.addLayout(self.groupBoxesLayout)
         self.topLayout.addWidget(self.saveButton)
+    
+    def loadAFClients(self):
+        self.af_clients = AF_API.request_renderclients()
+        for client in self.af_clients:
+            if client in self.selected_pool.clients:
+                print("IN")
+                item = QtGui.QStandardItem(client.hostname + " (" + client.ip + ")")
+                item.setCheckable(True)
+                item.setEnabled(False)
+                self.clientsModel.appendRow(item)
+            else:
+                print("NOT IN")
+                item = QtGui.QStandardItem(client.hostname + " (" + client.ip + ")")
+                item.setCheckable(True)
+                self.clientsModel.appendRow(item)
