@@ -1,5 +1,12 @@
+# Encoding: UTF-8
+# Author: Laurence Trippen
+# Date: 15.03.2019
+# E-Mail: laurence.trippen@gmail.com
+# Program: Afanasy Pool Manager - Network
+
 import socket
 
+# Scans the local network segment (TCP 3-Way-Handshake)
 class LANScanner():
     mac_ports       = [22, 445, 548, 631]
     linux_ports     = [20, 21, 22, 23, 25, 80, 111, 443, 445, 631, 993, 995]
