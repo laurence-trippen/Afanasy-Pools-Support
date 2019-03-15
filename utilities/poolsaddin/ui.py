@@ -165,6 +165,30 @@ class MainWindow(QtWidgets.QWidget):
                 for client in pool.clients:
                     self.clientsList.addItem(client.hostname)
 
+class NetworkScanWindow(QtWidgets.QWidget):
+    def __init__(self):
+        QtWidgets.QWidget.__init__(self)
+        self.setFixedSize(340, 60)
+        self.initUI()
+    
+    def initUI(self):
+        self.setWindowModality(QtCore.Qt.ApplicationModal)
+
+        # Window Title
+        self.setWindowTitle("Scanning network for hosts ...")
+        
+        # Window icon
+        iconpath = cgruutils.getIconFileName('afanasy')
+        if iconpath is not None:
+            self.setWindowIcon(QtGui.QIcon(iconpath))
+        
+        self.progressBar = QtGui.QProgressBar()
+        self.label = QtWidgets.QLabel("0 %")
+
+        self.topLayout = QtWidgets.QHBoxLayout(self)
+        self.topLayout.addWidget(self.progressBar)
+        self.topLayout.addWidget(self.label)
+
 class AddClientWindow(QtWidgets.QWidget):
     def __init__(self, selected_pool):
         QtWidgets.QWidget.__init__(self)
@@ -193,6 +217,7 @@ class AddClientWindow(QtWidgets.QWidget):
 
         self.networkList = QtWidgets.QListWidget()
         self.scanNetworkButton = QtWidgets.QPushButton("Scan Network")
+        self.scanNetworkButton.clicked.connect(self.scanNetwork)
         
         self.networkLayout = QtWidgets.QVBoxLayout()
         self.networkLayout.addWidget(self.networkList)
@@ -267,3 +292,7 @@ class AddClientWindow(QtWidgets.QWidget):
 
     def removeHostname(self):
         pass
+
+    def scanNetwork(self):
+        self.networkScanWindow = NetworkScanWindow()
+        self.networkScanWindow.show()
