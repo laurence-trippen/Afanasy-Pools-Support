@@ -7,6 +7,7 @@
 import os
 import sys
 import db
+import network
 
 from Qt import QtWidgets
 from ui import MainWindow
@@ -18,6 +19,8 @@ if __name__ == "__main__":
     else:
         print("CGRU_LOCATION is not set!")
         sys.exit()
+
+    # network.LANScanner().startScan()
 
     Config.check()
     Config.load()

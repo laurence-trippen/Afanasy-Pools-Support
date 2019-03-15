@@ -168,13 +168,19 @@ class MainWindow(QtWidgets.QWidget):
 class AddClientWindow(QtWidgets.QWidget):
     def __init__(self, selected_pool):
         QtWidgets.QWidget.__init__(self)
-        self.selected_pool = selected_pool
+        self.initSelectedPool(selected_pool)
         self.initUI()
         self.loadAFClients()
 
+    def initSelectedPool(self, selected_pool):
+        self.selected_pool = selected_pool
+        self.pool_hostnames = []
+        for client in selected_pool.clients:
+            self.pool_hostnames.append(client.hostname)
+
     # UI Initialization
     def initUI(self):
-        self.setFixedSize(470, 300)
+        self.setFixedSize(720, 300)
         self.setWindowModality(QtCore.Qt.ApplicationModal)
 
         # Window Title
@@ -185,8 +191,22 @@ class AddClientWindow(QtWidgets.QWidget):
         if iconpath is not None:
             self.setWindowIcon(QtGui.QIcon(iconpath))
 
+        self.networkList = QtWidgets.QListWidget()
+        self.scanNetworkButton = QtWidgets.QPushButton("Scan Network")
+        
+        self.networkLayout = QtWidgets.QVBoxLayout()
+        self.networkLayout.addWidget(self.networkList)
+        self.networkLayout.addWidget(self.scanNetworkButton)
+
+        self.networkGroupBox = QtWidgets.QGroupBox("Local Network")
+        self.networkGroupBox.setLayout(self.networkLayout)
+
         self.addHostnameButton = QtWidgets.QPushButton("(+) Hostname")
+        self.addHostnameButton.clicked.connect(self.addHostname)
+
         self.remHostnameButton = QtWidgets.QPushButton("(-) Hostname")
+        self.remHostnameButton.clicked.connect(self.removeHostname)
+
         self.hostnamesButtonsLayout = QtWidgets.QHBoxLayout()
         self.hostnamesButtonsLayout.addWidget(self.addHostnameButton)
         self.hostnamesButtonsLayout.addWidget(self.remHostnameButton)
@@ -212,13 +232,14 @@ class AddClientWindow(QtWidgets.QWidget):
         self.groupBoxesLayout = QtWidgets.QHBoxLayout()
         self.groupBoxesLayout.addWidget(self.clientsGroupBox)
         self.groupBoxesLayout.addWidget(self.hostnamesGroupBox)
+        self.groupBoxesLayout.addWidget(self.networkGroupBox)
 
         self.saveButton = QtWidgets.QPushButton("Save")
 
         self.topLayout = QtWidgets.QVBoxLayout(self)
         self.topLayout.addLayout(self.groupBoxesLayout)
         self.topLayout.addWidget(self.saveButton)
-    
+
     def loadAFClients(self):
         self.af_clients = AF_API.request_renderclients()
         for client in self.af_clients:
@@ -233,3 +254,16 @@ class AddClientWindow(QtWidgets.QWidget):
                 item = QtGui.QStandardItem(client.hostname + " (" + client.ip + ")")
                 item.setCheckable(True)
                 self.clientsModel.appendRow(item)
+
+    def addHostname(self):
+        text, ok = QtGui.QInputDialog.getText(self, 'Add Hostname', 'Hostname')
+        if ok and str(text) != "":
+            if text in self.pool_hostnames:
+                msgBox = QtGui.QMessageBox()
+                msgBox.setText("Hostname already exists!")
+                msgBox.exec_()
+            else:
+                self.hostnamesList.addItem(text)
+
+    def removeHostname(self):
+        pass
