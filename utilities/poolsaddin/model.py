@@ -26,9 +26,9 @@ class AF_API():
         clients = cmd.renderGetList()
         for client in clients:
             name = client['name']
-            version = client['engine']
+            # version = client['engine']
             address = client['address']
             ip = address['ip']
             port = address['port']
-            client_list.append(AF_RenderClient(name, version, ip, port))
+            client_list.append(AF_RenderClient(name, "", ip, port))
         return client_list

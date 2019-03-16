@@ -14,6 +14,8 @@ class LANScanner(QtCore.QThread):
     LINUX_PORTS     = [20, 21, 22, 23, 25, 80, 111, 443, 445, 631, 993, 995]
     WINDOWS_PORTS   = [135, 137, 138, 139, 445]
 
+    updateProgress = QtCore.Signal(int)
+
     def __init__(self):
         QtCore.QThread.__init__(self)
         self.result = []
@@ -35,7 +37,7 @@ class LANScanner(QtCore.QThread):
     def getHostname(self, ip):
         hostname = None
         try:
-            hostname = socket.gethostbyaddr(ip)
+            hostname = str(socket.gethostbyaddr(ip))
         except socket.herror:
             hostname = "Undefined."
         return hostname
@@ -86,4 +88,4 @@ class LANScanner(QtCore.QThread):
                         self.result.append(host_entry)
                     progress += step
                     self.updateProgress.emit(progress)
-            self.updateProgress(100)
+        self.updateProgress.emit(100)

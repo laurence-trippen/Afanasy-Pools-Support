@@ -10,6 +10,7 @@ import cgruutils
 
 from Qt import QtCore, QtGui, QtWidgets
 from model import AF_API, AF_RenderPool, AF_RenderClient
+from network import LANScanner
 
 # MainWindow class
 class MainWindow(QtWidgets.QWidget):
@@ -170,6 +171,12 @@ class NetworkScanWindow(QtWidgets.QWidget):
         QtWidgets.QWidget.__init__(self)
         self.setFixedSize(340, 60)
         self.initUI()
+
+        self.lanScannerThread = LANScanner()
+        self.lanScannerThread.updateProgress.connect(self.setProgress)
+        self.lanScannerThread.finished.connect(self.onFinished)
+        self.lanScannerThread.terminated.connect(self.onTerminated)
+        self.lanScannerThread.start()
     
     def initUI(self):
         self.setWindowModality(QtCore.Qt.ApplicationModal)
@@ -183,11 +190,20 @@ class NetworkScanWindow(QtWidgets.QWidget):
             self.setWindowIcon(QtGui.QIcon(iconpath))
         
         self.progressBar = QtGui.QProgressBar()
-        self.label = QtWidgets.QLabel("0 %")
+        self.progressBar.minimum = 1
+        self.progressBar.maximum = 100
 
         self.topLayout = QtWidgets.QHBoxLayout(self)
         self.topLayout.addWidget(self.progressBar)
-        self.topLayout.addWidget(self.label)
+    
+    def setProgress(self, progress):
+        self.progressBar.setValue(progress)
+
+    def onFinished(self):
+        self.close()
+    
+    def onTerminated(self):
+        self.close()
 
 class AddClientWindow(QtWidgets.QWidget):
     def __init__(self, selected_pool):
@@ -295,4 +311,16 @@ class AddClientWindow(QtWidgets.QWidget):
 
     def scanNetwork(self):
         self.networkScanWindow = NetworkScanWindow()
+        self.networkScanWindow.lanScannerThread.finished.connect(self.onFinished)
+        self.networkScanWindow.lanScannerThread.terminated.connect(self.onTerminated)
         self.networkScanWindow.show()
+    
+    def onFinished(self):
+        print("Finished")
+        result = self.networkScanWindow.lanScannerThread.result
+        for client in result:
+            print(client)
+            
+    def onTerminated(self):
+        print("Terminated")
+        print(self.networkScanWindow.lanScannerThread.result)
