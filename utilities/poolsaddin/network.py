@@ -34,12 +34,15 @@ class LANScanner(QtCore.QThread):
         else:
             s.close()
     
+    def parseAndFormatHostname(self, hostname):
+        return hostname[hostname.find("'")+1:hostname.find("',")]
+
     def getHostname(self, ip):
         hostname = None
         try:
-            hostname = str(socket.gethostbyaddr(ip))
+            hostname = self.parseAndFormatHostname(str(socket.gethostbyaddr(ip)))
         except socket.herror:
-            hostname = "Undefined."
+            hostname = "Hostname not found."
         return hostname
         # print('%s \t- %s \t- %s' % (ip, socket.getfqdn(ip), hostname))
 

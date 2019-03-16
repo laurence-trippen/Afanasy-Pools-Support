@@ -310,17 +310,17 @@ class AddClientWindow(QtWidgets.QWidget):
         pass
 
     def scanNetwork(self):
+        self.networkList.clear()
         self.networkScanWindow = NetworkScanWindow()
         self.networkScanWindow.lanScannerThread.finished.connect(self.onFinished)
         self.networkScanWindow.lanScannerThread.terminated.connect(self.onTerminated)
         self.networkScanWindow.show()
     
     def onFinished(self):
-        print("Finished")
         result = self.networkScanWindow.lanScannerThread.result
         for client in result:
-            print(client)
-            
+            self.networkList.addItem(client)
+
     def onTerminated(self):
         print("Terminated")
         print(self.networkScanWindow.lanScannerThread.result)
