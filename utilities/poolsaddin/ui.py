@@ -298,9 +298,7 @@ class AddClientWindow(QtWidgets.QWidget):
         self.hostnamesGroupBox.setLayout(self.hostnamesLayout)
 
         # Afanasy Clients List
-        self.clientsList = QtWidgets.QListView()
-        self.clientsModel = QtGui.QStandardItemModel(self.clientsList)
-        self.clientsList.setModel(self.clientsModel)
+        self.clientsList = QtWidgets.QListWidget()
 
         self.clientsLayout = QtWidgets.QVBoxLayout()
         self.clientsLayout.addWidget(self.clientsList)
@@ -335,15 +333,14 @@ class AddClientWindow(QtWidgets.QWidget):
         self.af_clients = AF_API.request_renderclients()
         for af_client in self.af_clients:
             if self.isClientInSelectedPool(af_client):
-                item = QtGui.QStandardItem(af_client.hostname + " (" + af_client.ip + ")")
-                item.setCheckable(True)
-                item.setEnabled(False)
+                item = QtGui.QListWidgetItem(af_client.hostname + " (" + af_client.ip + ")")
                 item.setCheckState(QtCore.Qt.Checked)
-                self.clientsModel.appendRow(item)
+                item.setFlags(QtCore.Qt.NoItemFlags)
+                self.clientsList.addItem(item)
             else:
-                item = QtGui.QStandardItem(af_client.hostname + " (" + af_client.ip + ")")
-                item.setCheckable(True)
-                self.clientsModel.appendRow(item)
+                item = QtGui.QListWidgetItem(af_client.hostname + " (" + af_client.ip + ")")
+                item.setCheckState(QtCore.Qt.Unchecked)
+                self.clientsList.addItem(item)
 
     # Add hostname
     def addHostname(self):
@@ -385,24 +382,46 @@ class AddClientWindow(QtWidgets.QWidget):
     # This is very resource-saving and time efficient.
     def loadLastScan(self):
         last_result = LANScanner.last_scan_result
-        if last_result != None:
-            for client in last_result:
-                self.networkList.addItem(client)
+        for client in last_result:
+            self.networkList.addItem(client)
     
     # Returns all hostnames from hostnames QListWidget
     def getHostnames(self):
-        hostnames = None
+        hostnames = []
         if self.hostnamesList.count() > 0:
-            hostnames = []
             i = 0
             while i < self.hostnamesList.count():
                 item = self.hostnamesList.item(i)
                 hostnames.append(item.text())
                 i += 1
         return hostnames
+    
+    # Returns all Afanasy clients as QListWidgetItems
+    def getAfanasyClientsItems(self):
+        items = []
+        if self.clientsList.count() > 0:
+            i = 0
+            while i < self.clientsList.count():
+                item = self.clientsList.item(i)
+                items.append(item)
+                i += 1
+        return items
 
     # Adds the selected Afanasy clients & hostnames.
     def save(self):
         hostnames = self.getHostnames()
         for hostname in hostnames:
             print(hostname)
+        
+        clientsItems = self.getAfanasyClientsItems()
+        for clientItem in clientsItems:
+            print(clientItem.text())
+            flags = clientItem.flags()
+            if flags & QtCore.Qt.NoItemFlags:
+                print("No Item Flags")
+
+            checkState = clientItem.checkState()
+            if checkState == QtCore.Qt.Checked:
+                print("checked")
+            elif checkState == QtCore.Qt.Unchecked:
+                print("unchecked")

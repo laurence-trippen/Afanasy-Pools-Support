@@ -17,7 +17,7 @@ class LANScanner(QtCore.QThread):
     WINDOWS_PORTS   = [135, 137, 138, 139, 445]
 
     updateProgress = QtCore.Signal(int)     # Update singal
-    last_scan_result = None                 # Result cache
+    last_scan_result = []                   # Result cache
 
     # Constructor
     def __init__(self):
