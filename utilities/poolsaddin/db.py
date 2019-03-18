@@ -13,6 +13,7 @@ class MongoDBConnector():
     db_name = "afpools"
     col_name = "pools"
     status = None
+    cache = dict()
 
     def __init__(self):
         pass

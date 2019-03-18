@@ -32,17 +32,17 @@ class MainWindow(QtWidgets.QWidget):
 
         self.poolsLabel = QtWidgets.QLabel("Pools")
         self.poolsList = QtWidgets.QListWidget()
-        self.poolsList.itemClicked.connect(self.onItemClicked)
+        self.poolsList.itemClicked.connect(self.onPoolClicked)
         # self.poolsList.selectionModel().setCurrentIndex(self.poolsList.model().index(1,1), QtGui.QItemSelectionModel.SelectionFlag.Select)
 
         self.createPoolButton = QtWidgets.QPushButton("Create")
-        self.createPoolButton.clicked.connect(self.showCreatePoolDialog)
+        self.createPoolButton.clicked.connect(self.createPool)
 
         self.deletePoolButton = QtWidgets.QPushButton("Delete")
-        self.deletePoolButton.clicked.connect(self.showDeletePoolDialog)
+        self.deletePoolButton.clicked.connect(self.deletePool)
 
         self.editPoolButton = QtWidgets.QPushButton("Edit")
-        self.editPoolButton.clicked.connect(self.showEditPoolDialog)
+        self.editPoolButton.clicked.connect(self.editPool)
 
         self.poolsButtonLayout = QtWidgets.QHBoxLayout()
         self.poolsButtonLayout.addWidget(self.createPoolButton)
@@ -58,7 +58,7 @@ class MainWindow(QtWidgets.QWidget):
         self.clientsList = QtWidgets.QListWidget()
 
         self.addClientButton = QtWidgets.QPushButton("Add Client(s)")
-        self.addClientButton.clicked.connect(self.showAddClientWindow)
+        self.addClientButton.clicked.connect(self.addClient)
 
         self.removeClientButton = QtWidgets.QPushButton("Remove Client")
 
@@ -82,8 +82,9 @@ class MainWindow(QtWidgets.QWidget):
         # Inits the MenuBar
         self.initMenuBar()
         self.initStatusBar()
-        self.loadAndFillPools()
+        self.loadPools()
 
+    # UI Menubar setup
     def initMenuBar(self):
         exitAction = QtGui.QAction(QtGui.QIcon('exit.png'), '&Exit', self)
         exitAction.setShortcut('Ctrl+Q')
@@ -97,35 +98,38 @@ class MainWindow(QtWidgets.QWidget):
         self.helpMenu = self.menubar.addMenu('?')
         self.topLayout.setMenuBar(self.menubar)
     
+    # UI Statusbar setup
     def initStatusBar(self):
         self.statusbar = QtGui.QStatusBar()
         self.statusbar.showMessage(db.MongoDBConnector.status)
         self.topLayout.addWidget(self.statusbar)
 
-    def loadAndFillPools(self):
+    # Loads pools from database.
+    def loadPools(self):
         self.pools = db.connection.findAllPools()
         for pool in self.pools:
             self.poolsList.addItem(pool.name)
     
-    def showCreatePoolDialog(self):
+    # Refreshs the pools list.
+    def update(self):
+        self.poolsList.clear()
+        self.loadPools()
+
+    # Create Pool
+    def createPool(self):
         text, ok = QtGui.QInputDialog.getText(self, 'Create Pool', 'Pool Name')
         if ok and str(text) != "":
             pool = AF_RenderPool(text)
-            pool.clients.append(AF_RenderClient("lt-pc-01", "", "", ""))
-            pool.clients.append(AF_RenderClient("lt-pc-02", "", "", ""))
             result = db.connection.insertPool(pool)
             if result["acknowledged"]:
-                self.poolsList.addItem(str(text))
+                self.update()
             else:
                 msgBox = QtGui.QMessageBox()
                 msgBox.setText(str(result["e"]))
                 msgBox.exec_()
-        else:
-            msgBox = QtGui.QMessageBox()
-            msgBox.setText("Pool name is empty!")
-            msgBox.exec_()
 
-    def showEditPoolDialog(self):
+    # Edit Pool
+    def editPool(self):
         currentItem = self.poolsList.currentItem()
         text, ok = QtGui.QInputDialog.getText(self, "New Pool Name", "New Pool Name", text=currentItem.text())
         if ok and str(text) != "":
@@ -138,7 +142,8 @@ class MainWindow(QtWidgets.QWidget):
                 msgBox.setText(str(result["e"]))
                 msgBox.exec_()
 
-    def showDeletePoolDialog(self):
+    # Delete Pool
+    def deletePool(self):
         currentItem = self.poolsList.currentItem()
         flags = QtGui.QMessageBox.StandardButton.Yes
         flags |= QtGui.QMessageBox.StandardButton.No
@@ -149,7 +154,8 @@ class MainWindow(QtWidgets.QWidget):
             if result["acknowledged"]:
                 self.poolsList.takeItem(self.poolsList.currentRow())
 
-    def showAddClientWindow(self):
+    # Add Client
+    def addClient(self):
         if self.selected_pool != None:
             self.addClientWindow = AddClientWindow(self.selected_pool)
             self.addClientWindow.show()
@@ -158,7 +164,8 @@ class MainWindow(QtWidgets.QWidget):
             msgBox.setText("No pool selected!")
             msgBox.exec_()
     
-    def onItemClicked(self, item):
+    # Updates the clients list with selected pool clients.
+    def onPoolClicked(self, item):
         for pool in self.pools:
             if pool.name == item.text():
                 self.selected_pool = pool
@@ -166,6 +173,7 @@ class MainWindow(QtWidgets.QWidget):
                 for client in pool.clients:
                     self.clientsList.addItem(client.hostname)
 
+# Network scan progress window.
 class NetworkScanWindow(QtWidgets.QWidget):
     def __init__(self):
         QtWidgets.QWidget.__init__(self)
@@ -178,6 +186,7 @@ class NetworkScanWindow(QtWidgets.QWidget):
         self.lanScannerThread.terminated.connect(self.onTerminated)
         self.lanScannerThread.start()
     
+    # UI setup
     def initUI(self):
         self.setWindowModality(QtCore.Qt.ApplicationModal)
 
@@ -196,15 +205,19 @@ class NetworkScanWindow(QtWidgets.QWidget):
         self.topLayout = QtWidgets.QHBoxLayout(self)
         self.topLayout.addWidget(self.progressBar)
     
+    # Updates the progressbar
     def setProgress(self, progress):
         self.progressBar.setValue(progress)
 
+    # If thread finished the window close automatically
     def onFinished(self):
         self.close()
     
+    # If thread terminated (canceled) the window close automatically.
     def onTerminated(self):
         self.close()
 
+# Add Client Dialog/Window
 class AddClientWindow(QtWidgets.QWidget):
     def __init__(self, selected_pool):
         QtWidgets.QWidget.__init__(self)
@@ -285,13 +298,11 @@ class AddClientWindow(QtWidgets.QWidget):
         self.af_clients = AF_API.request_renderclients()
         for client in self.af_clients:
             if client in self.selected_pool.clients:
-                print("IN")
                 item = QtGui.QStandardItem(client.hostname + " (" + client.ip + ")")
                 item.setCheckable(True)
-                item.setEnabled(False)
+                item.setCheckState(QtCore.Qt.Checked)
                 self.clientsModel.appendRow(item)
             else:
-                print("NOT IN")
                 item = QtGui.QStandardItem(client.hostname + " (" + client.ip + ")")
                 item.setCheckable(True)
                 self.clientsModel.appendRow(item)
@@ -307,7 +318,7 @@ class AddClientWindow(QtWidgets.QWidget):
                 self.hostnamesList.addItem(text)
 
     def removeHostname(self):
-        pass
+        self.hostnamesList.takeItem(self.hostnamesList.currentRow())
 
     def scanNetwork(self):
         self.networkList.clear()
@@ -315,7 +326,7 @@ class AddClientWindow(QtWidgets.QWidget):
         self.networkScanWindow.lanScannerThread.finished.connect(self.onFinished)
         self.networkScanWindow.lanScannerThread.terminated.connect(self.onTerminated)
         self.networkScanWindow.show()
-    
+
     def onFinished(self):
         result = self.networkScanWindow.lanScannerThread.result
         for client in result:
@@ -324,3 +335,6 @@ class AddClientWindow(QtWidgets.QWidget):
     def onTerminated(self):
         print("Terminated")
         print(self.networkScanWindow.lanScannerThread.result)
+
+    def getCheckedClients(self):
+        pass
