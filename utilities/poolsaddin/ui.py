@@ -253,7 +253,7 @@ class AddClientWindow(QtWidgets.QWidget):
 
     # UI Initialization
     def initUI(self):
-        self.setFixedSize(720, 300)
+        self.setFixedSize(780, 300)
         self.setWindowModality(QtCore.Qt.ApplicationModal)
 
         # Window Title
@@ -370,7 +370,11 @@ class AddClientWindow(QtWidgets.QWidget):
     def onFinished(self):
         result = self.networkScanWindow.lanScannerThread.result
         for client in result:
-            self.networkList.addItem(client)
+            item = QtGui.QListWidgetItem(client)
+            if "Hostname not found." in client:
+                item.setFlags(QtCore.Qt.NoItemFlags)
+            item.setCheckState(QtCore.Qt.Unchecked)
+            self.networkList.addItem(item)
 
     # Network segment scan on terminated callback.
     def onTerminated(self):
@@ -383,7 +387,11 @@ class AddClientWindow(QtWidgets.QWidget):
     def loadLastScan(self):
         last_result = LANScanner.last_scan_result
         for client in last_result:
-            self.networkList.addItem(client)
+            item = QtGui.QListWidgetItem(client)
+            if "Hostname not found." in client:
+                item.setFlags(QtCore.Qt.NoItemFlags)
+            item.setCheckState(QtCore.Qt.Unchecked)
+            self.networkList.addItem(item)
     
     # Returns all hostnames from hostnames QListWidget
     def getHostnames(self):

@@ -48,6 +48,8 @@ class LANScanner(QtCore.QThread):
         hostname = None
         try:
             hostname = self.parseAndFormatHostname(str(socket.gethostbyaddr(ip)))
+            if ".localdomain" in hostname:
+                hostname = hostname.replace(".localdomain", "")
         except socket.herror:
             hostname = "Hostname not found."
         return hostname
