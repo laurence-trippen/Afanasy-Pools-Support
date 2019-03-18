@@ -6,6 +6,7 @@
 
 import os
 import db
+import utils
 import cgruutils
 
 from Qt import QtCore, QtGui, QtWidgets
@@ -314,6 +315,7 @@ class AddClientWindow(QtWidgets.QWidget):
 
         # Save Button
         self.saveButton = QtWidgets.QPushButton("Save")
+        self.saveButton.clicked.connect(self.save)
 
         # Root node
         self.topLayout = QtWidgets.QVBoxLayout(self)
@@ -347,7 +349,7 @@ class AddClientWindow(QtWidgets.QWidget):
     def addHostname(self):
         text, ok = QtGui.QInputDialog.getText(self, 'Add Hostname', 'Hostname')
         if ok and str(text) != "":
-            if text in self.pool_hostnames:
+            if text in self.pool_hostnames or utils.hasQListWidgetText(self.hostnamesList, text):
                 msgBox = QtGui.QMessageBox(self)
                 msgBox.setWindowTitle("Warning!")
                 msgBox.setText("Hostname already exists!")
@@ -386,3 +388,20 @@ class AddClientWindow(QtWidgets.QWidget):
         if last_result != None:
             for client in last_result:
                 self.networkList.addItem(client)
+    
+    def getHostnames(self):
+        hostnames = None
+        if self.hostnamesList.count() > 0:
+            hostnames = []
+            i = 0
+            while i < self.hostnamesList.count():
+                item = self.hostnamesList.item(i)
+                hostnames.append(item.text())
+                i += 1
+        return hostnames
+
+    # Adds the selected Afanasy clients & hostnames.
+    def save(self):
+        hostnames = self.getHostnames()
+        for hostname in hostnames:
+            print(hostname)
