@@ -124,7 +124,8 @@ class MainWindow(QtWidgets.QWidget):
             if result["acknowledged"]:
                 self.update()
             else:
-                msgBox = QtGui.QMessageBox()
+                msgBox = QtGui.QMessageBox(self)
+                msgBox.setWindowTitle("Error")
                 msgBox.setText(str(result["e"]))
                 msgBox.exec_()
 
@@ -135,10 +136,10 @@ class MainWindow(QtWidgets.QWidget):
         if ok and str(text) != "":
             result = db.connection.updatePoolName(currentItem.text(), text)
             if result["acknowledged"]:
-                currentItem.setText(text)
-                self.poolsList.editItem(currentItem)
+                self.update()
             else:
-                msgBox = QtGui.QMessageBox()
+                msgBox = QtGui.QMessageBox(self)
+                msgBox.setWindowTitle("Error")
                 msgBox.setText(str(result["e"]))
                 msgBox.exec_()
 
@@ -152,7 +153,7 @@ class MainWindow(QtWidgets.QWidget):
         if response == QtGui.QMessageBox.Yes:
             result = db.connection.deletePool(currentItem.text())
             if result["acknowledged"]:
-                self.poolsList.takeItem(self.poolsList.currentRow())
+                self.update()
 
     # Add Client
     def addClient(self):
@@ -160,11 +161,13 @@ class MainWindow(QtWidgets.QWidget):
             self.addClientWindow = AddClientWindow(self.selected_pool)
             self.addClientWindow.show()
         else:
-            msgBox = QtGui.QMessageBox()
+            msgBox = QtGui.QMessageBox(self)
+            msgBox.setWindowTitle("Alert!")
             msgBox.setText("No pool selected!")
             msgBox.exec_()
     
     # Updates the clients list with selected pool clients.
+    # self.selected_pool is set by clicking on item.
     def onPoolClicked(self, item):
         for pool in self.pools:
             if pool.name == item.text():
@@ -180,6 +183,7 @@ class NetworkScanWindow(QtWidgets.QWidget):
         self.setFixedSize(340, 60)
         self.initUI()
 
+        # LAN Scanner thread setup & binding to UI.
         self.lanScannerThread = LANScanner()
         self.lanScannerThread.updateProgress.connect(self.setProgress)
         self.lanScannerThread.finished.connect(self.onFinished)
@@ -188,6 +192,7 @@ class NetworkScanWindow(QtWidgets.QWidget):
     
     # UI setup
     def initUI(self):
+        # Modality
         self.setWindowModality(QtCore.Qt.ApplicationModal)
 
         # Window Title
@@ -198,10 +203,12 @@ class NetworkScanWindow(QtWidgets.QWidget):
         if iconpath is not None:
             self.setWindowIcon(QtGui.QIcon(iconpath))
         
+        # ProgessBar
         self.progressBar = QtGui.QProgressBar()
         self.progressBar.minimum = 1
         self.progressBar.maximum = 100
 
+        # Root node.
         self.topLayout = QtWidgets.QHBoxLayout(self)
         self.topLayout.addWidget(self.progressBar)
     
@@ -311,7 +318,8 @@ class AddClientWindow(QtWidgets.QWidget):
         text, ok = QtGui.QInputDialog.getText(self, 'Add Hostname', 'Hostname')
         if ok and str(text) != "":
             if text in self.pool_hostnames:
-                msgBox = QtGui.QMessageBox()
+                msgBox = QtGui.QMessageBox(self)
+                msgBox.setWindowTitle("Warning!")
                 msgBox.setText("Hostname already exists!")
                 msgBox.exec_()
             else:
