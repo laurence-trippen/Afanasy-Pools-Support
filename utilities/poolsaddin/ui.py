@@ -30,19 +30,22 @@ class MainWindow(QtWidgets.QWidget):
         if iconpath is not None:
             self.setWindowIcon(QtGui.QIcon(iconpath))
 
+        # Pools List
         self.poolsLabel = QtWidgets.QLabel("Pools")
         self.poolsList = QtWidgets.QListWidget()
         self.poolsList.itemClicked.connect(self.onPoolClicked)
-        # self.poolsList.selectionModel().setCurrentIndex(self.poolsList.model().index(1,1), QtGui.QItemSelectionModel.SelectionFlag.Select)
 
+        # Create Pool Button
         self.createPoolButton = QtWidgets.QPushButton("Create")
         self.createPoolButton.clicked.connect(self.createPool)
 
-        self.deletePoolButton = QtWidgets.QPushButton("Delete")
-        self.deletePoolButton.clicked.connect(self.deletePool)
-
+        # Edit Pool Button
         self.editPoolButton = QtWidgets.QPushButton("Edit")
         self.editPoolButton.clicked.connect(self.editPool)
+        
+        # Delete Pool Button
+        self.deletePoolButton = QtWidgets.QPushButton("Delete")
+        self.deletePoolButton.clicked.connect(self.deletePool)
 
         self.poolsButtonLayout = QtWidgets.QHBoxLayout()
         self.poolsButtonLayout.addWidget(self.createPoolButton)
@@ -54,13 +57,17 @@ class MainWindow(QtWidgets.QWidget):
         self.poolsLayout.addWidget(self.poolsList)
         self.poolsLayout.addLayout(self.poolsButtonLayout)
 
+        # Clients List
         self.clientsLabel = QtWidgets.QLabel("Clients")
         self.clientsList = QtWidgets.QListWidget()
 
+        # Add Client Button
         self.addClientButton = QtWidgets.QPushButton("Add Client(s)")
         self.addClientButton.clicked.connect(self.addClient)
 
+        # Remove Client Button
         self.removeClientButton = QtWidgets.QPushButton("Remove Client")
+        self.removeClientButton.clicked.connect(self.removeClient)
 
         self.clientsButtonLayout = QtWidgets.QHBoxLayout()
         self.clientsButtonLayout.addWidget(self.addClientButton)
@@ -166,6 +173,10 @@ class MainWindow(QtWidgets.QWidget):
             msgBox.setText("No pool selected!")
             msgBox.exec_()
     
+    # Remove Client
+    def removeClient(self):
+        pass
+
     # Updates the clients list with selected pool clients.
     # self.selected_pool is set by clicking on item.
     def onPoolClicked(self, item):
@@ -218,7 +229,6 @@ class NetworkScanWindow(QtWidgets.QWidget):
 
     # If thread finished the window close automatically
     def onFinished(self):
-
         self.close()
     
     # If thread terminated (canceled) the window close automatically.
@@ -253,6 +263,7 @@ class AddClientWindow(QtWidgets.QWidget):
         if iconpath is not None:
             self.setWindowIcon(QtGui.QIcon(iconpath))
 
+        # Network Scan List
         self.networkList = QtWidgets.QListWidget()
         self.scanNetworkButton = QtWidgets.QPushButton("Scan Network")
         self.scanNetworkButton.clicked.connect(self.scanNetwork)
@@ -264,9 +275,11 @@ class AddClientWindow(QtWidgets.QWidget):
         self.networkGroupBox = QtWidgets.QGroupBox("Local Network")
         self.networkGroupBox.setLayout(self.networkLayout)
 
+        # Add Hostname Button
         self.addHostnameButton = QtWidgets.QPushButton("(+) Hostname")
         self.addHostnameButton.clicked.connect(self.addHostname)
 
+        # Remove Hostname Button
         self.remHostnameButton = QtWidgets.QPushButton("(-) Hostname")
         self.remHostnameButton.clicked.connect(self.removeHostname)
 
@@ -274,6 +287,7 @@ class AddClientWindow(QtWidgets.QWidget):
         self.hostnamesButtonsLayout.addWidget(self.addHostnameButton)
         self.hostnamesButtonsLayout.addWidget(self.remHostnameButton)
 
+        # Hostname List
         self.hostnamesList = QtWidgets.QListWidget()
         self.hostnamesLayout = QtWidgets.QVBoxLayout()
         self.hostnamesLayout.addWidget(self.hostnamesList)
@@ -282,6 +296,7 @@ class AddClientWindow(QtWidgets.QWidget):
         self.hostnamesGroupBox = QtWidgets.QGroupBox("Hostnames")
         self.hostnamesGroupBox.setLayout(self.hostnamesLayout)
 
+        # Afanasy Clients List
         self.clientsList = QtWidgets.QListView()
         self.clientsModel = QtGui.QStandardItemModel(self.clientsList)
         self.clientsList.setModel(self.clientsModel)
@@ -297,18 +312,23 @@ class AddClientWindow(QtWidgets.QWidget):
         self.groupBoxesLayout.addWidget(self.hostnamesGroupBox)
         self.groupBoxesLayout.addWidget(self.networkGroupBox)
 
+        # Save Button
         self.saveButton = QtWidgets.QPushButton("Save")
 
+        # Root node
         self.topLayout = QtWidgets.QVBoxLayout(self)
         self.topLayout.addLayout(self.groupBoxesLayout)
         self.topLayout.addWidget(self.saveButton)
 
+    # Checks if client is already in pool.
+    # If true then make the client not addable.
     def isClientInSelectedPool(self, af_client):
         for client in self.selected_pool.clients:
             if af_client.hostname == client.hostname:
                 return True
         return False
 
+    # Loads the Afanasy clients.
     def loadAFClients(self):
         self.af_clients = AF_API.request_renderclients()
         for af_client in self.af_clients:
@@ -323,6 +343,7 @@ class AddClientWindow(QtWidgets.QWidget):
                 item.setCheckable(True)
                 self.clientsModel.appendRow(item)
 
+    # Add hostname
     def addHostname(self):
         text, ok = QtGui.QInputDialog.getText(self, 'Add Hostname', 'Hostname')
         if ok and str(text) != "":
@@ -334,9 +355,11 @@ class AddClientWindow(QtWidgets.QWidget):
             else:
                 self.hostnamesList.addItem(text)
 
+    # Remove hostname
     def removeHostname(self):
         self.hostnamesList.takeItem(self.hostnamesList.currentRow())
 
+    # Shows the network scan window and starts thread worker.
     def scanNetwork(self):
         self.networkList.clear()
         self.networkScanWindow = NetworkScanWindow()
@@ -344,18 +367,20 @@ class AddClientWindow(QtWidgets.QWidget):
         self.networkScanWindow.lanScannerThread.terminated.connect(self.onTerminated)
         self.networkScanWindow.show()
 
+    # Network segment scan on finished callback.
     def onFinished(self):
         result = self.networkScanWindow.lanScannerThread.result
         for client in result:
             self.networkList.addItem(client)
 
+    # Network segment scan on terminated callback.
     def onTerminated(self):
         print("Terminated")
         print(self.networkScanWindow.lanScannerThread.result)
-
-    def getCheckedClients(self):
-        pass
     
+    # Checks if the network has already been scanned.
+    # If so then load the last scan.
+    # This is very resource-saving and time efficient.
     def loadLastScan(self):
         last_result = LANScanner.last_scan_result
         if last_result != None:
