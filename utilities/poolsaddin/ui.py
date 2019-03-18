@@ -406,6 +406,16 @@ class AddClientWindow(QtWidgets.QWidget):
                 items.append(item)
                 i += 1
         return items
+    
+    # Filters for enabled and checked client items.
+    def filterAfanasyClientItems(self, clientsItems):
+        items = []
+        for clientItem in clientsItems:
+            flags = clientItem.flags()
+            checkState = clientItem.checkState()
+            if flags & QtCore.Qt.ItemIsEnabled and checkState == QtCore.Qt.Checked:
+                items.append(clientItem)
+        return items
 
     # Adds the selected Afanasy clients & hostnames.
     def save(self):
@@ -413,15 +423,6 @@ class AddClientWindow(QtWidgets.QWidget):
         for hostname in hostnames:
             print(hostname)
         
-        clientsItems = self.getAfanasyClientsItems()
-        for clientItem in clientsItems:
-            print(clientItem.text())
-            flags = clientItem.flags()
-            if flags & QtCore.Qt.NoItemFlags:
-                print("No Item Flags")
-
-            checkState = clientItem.checkState()
-            if checkState == QtCore.Qt.Checked:
-                print("checked")
-            elif checkState == QtCore.Qt.Unchecked:
-                print("unchecked")
+        filteredClients = self.filterAfanasyClientItems(self.getAfanasyClientsItems())
+        for client in filteredClients:
+            print(client.text())
