@@ -162,7 +162,7 @@ class MainWindow(QtWidgets.QWidget):
             self.addClientWindow.show()
         else:
             msgBox = QtGui.QMessageBox(self)
-            msgBox.setWindowTitle("Alert!")
+            msgBox.setWindowTitle("Information")
             msgBox.setText("No pool selected!")
             msgBox.exec_()
     
@@ -218,6 +218,7 @@ class NetworkScanWindow(QtWidgets.QWidget):
 
     # If thread finished the window close automatically
     def onFinished(self):
+
         self.close()
     
     # If thread terminated (canceled) the window close automatically.
@@ -231,6 +232,7 @@ class AddClientWindow(QtWidgets.QWidget):
         self.initSelectedPool(selected_pool)
         self.initUI()
         self.loadAFClients()
+        self.loadLastScan()
 
     def initSelectedPool(self, selected_pool):
         self.selected_pool = selected_pool
@@ -301,16 +303,23 @@ class AddClientWindow(QtWidgets.QWidget):
         self.topLayout.addLayout(self.groupBoxesLayout)
         self.topLayout.addWidget(self.saveButton)
 
+    def isClientInSelectedPool(self, af_client):
+        for client in self.selected_pool.clients:
+            if af_client.hostname == client.hostname:
+                return True
+        return False
+
     def loadAFClients(self):
         self.af_clients = AF_API.request_renderclients()
-        for client in self.af_clients:
-            if client in self.selected_pool.clients:
-                item = QtGui.QStandardItem(client.hostname + " (" + client.ip + ")")
+        for af_client in self.af_clients:
+            if self.isClientInSelectedPool(af_client):
+                item = QtGui.QStandardItem(af_client.hostname + " (" + af_client.ip + ")")
                 item.setCheckable(True)
+                item.setEnabled(False)
                 item.setCheckState(QtCore.Qt.Checked)
                 self.clientsModel.appendRow(item)
             else:
-                item = QtGui.QStandardItem(client.hostname + " (" + client.ip + ")")
+                item = QtGui.QStandardItem(af_client.hostname + " (" + af_client.ip + ")")
                 item.setCheckable(True)
                 self.clientsModel.appendRow(item)
 
@@ -346,3 +355,9 @@ class AddClientWindow(QtWidgets.QWidget):
 
     def getCheckedClients(self):
         pass
+    
+    def loadLastScan(self):
+        last_result = LANScanner.last_scan_result
+        if last_result != None:
+            for client in last_result:
+                self.networkList.addItem(client)
