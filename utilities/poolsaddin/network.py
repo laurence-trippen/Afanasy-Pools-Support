@@ -10,13 +10,16 @@ from Qt import QtCore
 
 # Scans the local network segment (TCP 3-Way-Handshake)
 class LANScanner(QtCore.QThread):
+    # Destination ports.
+    # Probably too many ports, which slows down the scan. :-(
     MAC_PORTS       = [22, 445, 548, 631]
     LINUX_PORTS     = [20, 21, 22, 23, 25, 80, 111, 443, 445, 631, 993, 995]
     WINDOWS_PORTS   = [135, 137, 138, 139, 445]
 
-    updateProgress = QtCore.Signal(int)
-    last_scan_result = None
+    updateProgress = QtCore.Signal(int)     # Update singal
+    last_scan_result = None                 # Result cache
 
+    # Constructor
     def __init__(self):
         QtCore.QThread.__init__(self)
         self.result = []
@@ -26,6 +29,7 @@ class LANScanner(QtCore.QThread):
         del(self.networkPrefix[-1])
         self.networkPrefix = ".".join(self.networkPrefix)
 
+    # Socket connection check. Hello?
     def checkIP(self, ip, port):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.settimeout(0.01)
@@ -35,9 +39,11 @@ class LANScanner(QtCore.QThread):
         else:
             s.close()
     
+    # Parse and hostname formatting.
     def parseAndFormatHostname(self, hostname):
         return hostname[hostname.find("'")+1:hostname.find("',")]
 
+    # Get Hostname by IP address.
     def getHostname(self, ip):
         hostname = None
         try:
@@ -45,7 +51,6 @@ class LANScanner(QtCore.QThread):
         except socket.herror:
             hostname = "Hostname not found."
         return hostname
-        # print('%s \t- %s \t- %s' % (ip, socket.getfqdn(ip), hostname))
 
     '''
     Progress percentage calculation:
@@ -59,6 +64,7 @@ class LANScanner(QtCore.QThread):
         print(str(int(round(progress))) + "%")
     '''
 
+    # Thread code.
     def run(self):
         win_ports_len = len(LANScanner.WINDOWS_PORTS)
         mac_ports_len = len(LANScanner.MAC_PORTS)

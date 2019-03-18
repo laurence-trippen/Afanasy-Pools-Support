@@ -7,11 +7,14 @@
 import os
 import json
 
+# Access to local config.json
+# Maybe this can be stored later in the CGRU config.
 class Config():
     mongodb_host = 'localhost'
     mongodb_port = 27017
     path = os.path.join(os.environ["CGRU_LOCATION"], "utilities", "poolsaddin", "config.json")
 
+    # If config does not exist, it will be created with the default settings.
     @staticmethod
     def check():
         if not os.path.isfile(Config.path):
@@ -21,11 +24,13 @@ class Config():
             }
             Config.save(data)
 
+    # Save config file.
     @staticmethod
     def save(data):
         with open(Config.path, "w") as outfile:
             json.dump(data, outfile, indent=4)
 
+    # Load config file.
     @staticmethod
     def load():
         with open(Config.path) as json_file:

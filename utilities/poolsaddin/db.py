@@ -10,14 +10,12 @@ from model import AF_RenderPool, AF_RenderClient
 connection = None
 
 class MongoDBConnector():
-    db_name = "afpools"
-    col_name = "pools"
+    POOLS_DATABSE       = "afpools"
+    POOLS_COLLECTION    = "pools"
     status = None
     cache = dict()
 
-    def __init__(self):
-        pass
-
+    # Establishs the connection to MongoDB database.
     def connect(self, connection):
         try:
             self.client = pymongo.MongoClient(connection)
@@ -25,10 +23,11 @@ class MongoDBConnector():
         except:
             MongoDBConnector.status = ">> Database connection failed."
 
-        self.afpools_db = self.client[MongoDBConnector.db_name]
-        self.pools_col = self.afpools_db[MongoDBConnector.col_name]
+        self.afpools_db = self.client[MongoDBConnector.POOLS_DATABSE]
+        self.pools_col = self.afpools_db[MongoDBConnector.POOLS_COLLECTION]
         self.pools_col.create_index("name", unique=True)
 
+    # Insert one pool.
     def insertPool(self, pool):
         try:
             result = self.pools_col.insert_one(self.convertPool(pool))
@@ -36,6 +35,7 @@ class MongoDBConnector():
         except pymongo.errors.PyMongoError as e:
             return { "acknowledged" : False, "e" : e }
     
+    # Delete one pool.
     def deletePool(self, poolName):
         try:
             result = self.pools_col.delete_one({ "name" : poolName })
@@ -43,6 +43,7 @@ class MongoDBConnector():
         except pymongo.errors.PyMongoError as e:
             return { "acknowledged" : result.acknowledged, "e" : e }
 
+    # Update on pool.
     def updatePoolName(self, oldPoolName, newPoolName):
         try:
             result = self.pools_col.update_one({ "name" : oldPoolName }, {"$set" : { "name" : newPoolName }})
@@ -50,12 +51,14 @@ class MongoDBConnector():
         except pymongo.errors.PyMongoError as e:
             return { "acknowledged" : result.acknowledged, "e" : e }
 
+    # Find all pools.
     def findAllPools(self):
         pools = []
         for pool in self.pools_col.find():
             pools.append(self.convertPool(pool))
         return pools
 
+    # AF_RenderPool <-> dict converts.
     def convertPool(self, pool):
         if isinstance(pool, AF_RenderPool):
             poolDict = {
@@ -72,7 +75,8 @@ class MongoDBConnector():
             for client in dictClients:
                 renderpool.clients.append(self.convertClient(client))
             return renderpool
-            
+    
+    # AF_RenderClient <-> dict converts.
     def convertClient(self, client):
         if isinstance(client, AF_RenderClient):
             clientDict = {

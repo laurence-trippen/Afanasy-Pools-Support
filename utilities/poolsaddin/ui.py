@@ -389,6 +389,7 @@ class AddClientWindow(QtWidgets.QWidget):
             for client in last_result:
                 self.networkList.addItem(client)
     
+    # Returns all hostnames from hostnames QListWidget
     def getHostnames(self):
         hostnames = None
         if self.hostnamesList.count() > 0:
