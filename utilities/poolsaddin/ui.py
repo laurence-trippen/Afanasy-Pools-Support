@@ -183,12 +183,38 @@ class MainWindow(QtWidgets.QWidget):
     
     # Remove Client
     def removeClient(self):
-        pass
+        if self.selected_pool != None:
+            if not self.clientsList.currentItem() is None:
+                clientItem = self.clientsList.currentItem()
+                flags = QtGui.QMessageBox.StandardButton.Yes
+                flags |= QtGui.QMessageBox.StandardButton.No
+                question = "Do you realy want to delete the client '" + clientItem.text() + "'?"
+                response = QtGui.QMessageBox.question(self, "Question", question, flags)
+                if response == QtGui.QMessageBox.Yes:
+                    result = db.connection.pullClientFromPool(self.poolsList.currentItem().text(), clientItem.text())
+                    if result["acknowledged"]:
+                        self.update()
+                    else:
+                        msgBox = QtGui.QMessageBox(self)
+                        msgBox.setWindowTitle("Error")
+                        msgBox.setText(str(result["e"]))
+                        msgBox.exec_()
+            else:
+                msgBox = QtGui.QMessageBox(self)
+                msgBox.setWindowTitle("Information")
+                msgBox.setText("No client selected!")
+                msgBox.exec_()
+        else:
+            msgBox = QtGui.QMessageBox(self)
+            msgBox.setWindowTitle("Information")
+            msgBox.setText("No pool selected!")
+            msgBox.exec_()
 
     # Updates the clients list with selected pool clients.
     # self.selected_pool is set by clicking on item.
     def onPoolClicked(self, item):
         self.last_selected_pool_name = item.text()
+        self.last_pool_item = item
         for pool in self.pools:
             if pool.name == item.text():
                 self.selected_pool = pool

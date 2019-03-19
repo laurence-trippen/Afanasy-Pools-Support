@@ -57,6 +57,14 @@ class MongoDBConnector():
             return { "acknowledged" : result.acknowledged, "e" : None }
         except pymongo.errors.PyMongoError as e:
             return { "acknowledged" : result.acknowledged, "e" : e }
+    
+    # Deletes client by hostname.
+    def pullClientFromPool(self, poolName, hostname):
+        try:
+            result = self.pools_col.update_one({ "name" : poolName }, {"$pull" : {"clients" : { "hostname" : hostname }}})
+            return { "acknowledged" : result.acknowledged, "e" : None }
+        except pymongo.errors.PyMongoError as e:
+            return { "acknowledged" : result.acknowledged, "e" : e }
         
     # Find all pools.
     def findAllPools(self):
