@@ -120,6 +120,7 @@ class MainWindow(QtWidgets.QWidget):
     
     # Refreshs the pools list.
     def update(self):
+        print("Update")
         self.poolsList.clear()
         self.loadPools()
 
@@ -167,6 +168,7 @@ class MainWindow(QtWidgets.QWidget):
     def addClient(self):
         if self.selected_pool != None:
             self.addClientWindow = AddClientWindow(self.selected_pool)
+            self.addClientWindow.closed.connect(self.update)
             self.addClientWindow.show()
         else:
             msgBox = QtGui.QMessageBox(self)
@@ -238,12 +240,17 @@ class NetworkScanWindow(QtWidgets.QWidget):
 
 # Add Client Dialog/Window
 class AddClientWindow(QtWidgets.QWidget):
+    closed = QtCore.Signal()
     def __init__(self, selected_pool):
         QtWidgets.QWidget.__init__(self)
         self.initSelectedPool(selected_pool)
         self.initUI()
         self.loadAFClients()
         self.loadLastScan()
+
+    # On widget close() emits the closed signal.
+    def closeEvent(self, event):
+        self.closed.emit()
 
     def initSelectedPool(self, selected_pool):
         self.selected_pool = selected_pool
@@ -417,14 +424,36 @@ class AddClientWindow(QtWidgets.QWidget):
 
     # Adds the selected Afanasy clients & hostnames.
     def save(self):
+        # All selected clients for database insert.
+        consolidatedClients = []
+
+        # Add all hostname strings to consolidatedClients[]
         hostnames = self.getHostnames()
         for hostname in hostnames:
-            print(hostname)
+            if not hostname in consolidatedClients:
+                consolidatedClients.append(hostname)
         
+        # Add all selected afanasy clients to consolidatedClients[]
         filterAfClients = utils.filterForCheckedAndEnabledItems(utils.getQListWidgetItems(self.clientsList))
         for client in filterAfClients:
-            print(client.text())
+            hostname = utils.parseHostnameFromFormat(client.text())
+            if not hostname in consolidatedClients:
+                consolidatedClients.append(hostname)
         
+        # Add all selected network clients to consolidatedClients[]
         filteredNetClients = utils.filterForCheckedAndEnabledItems(utils.getQListWidgetItems(self.networkList))
         for client in filteredNetClients:
-            print(client.text())
+            hostname = utils.parseHostnameFromFormat(client.text())
+            if not hostname in consolidatedClients:
+                consolidatedClients.append(hostname)
+        
+        # Pushs clients to selected pool in database.
+        for hostname in consolidatedClients:
+            result = db.connection.pushClientToPool(self.selected_pool.name, AF_RenderClient(hostname, "", "", ""))
+            if not result["acknowledged"]:
+                msgBox = QtGui.QMessageBox(self)
+                msgBox.setWindowTitle("Error")
+                msgBox.setText(str(result["e"]))
+                msgBox.exec_()
+        
+        self.close()

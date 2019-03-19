@@ -13,7 +13,6 @@ class MongoDBConnector():
     POOLS_DATABSE       = "afpools"
     POOLS_COLLECTION    = "pools"
     status = None
-    cache = dict()
 
     # Establishs the connection to MongoDB database.
     def connect(self, connection):
@@ -51,6 +50,14 @@ class MongoDBConnector():
         except pymongo.errors.PyMongoError as e:
             return { "acknowledged" : result.acknowledged, "e" : e }
 
+    # Adds/pushs client to pool
+    def pushClientToPool(self, poolName, afClient):
+        try:
+            result = self.pools_col.update_one({ "name" : poolName }, {"$push" : {"clients" : self.convertClient(afClient)}})
+            return { "acknowledged" : result.acknowledged, "e" : None }
+        except pymongo.errors.PyMongoError as e:
+            return { "acknowledged" : result.acknowledged, "e" : e }
+        
     # Find all pools.
     def findAllPools(self):
         pools = []
