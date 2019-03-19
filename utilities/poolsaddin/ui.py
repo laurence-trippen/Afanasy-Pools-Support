@@ -17,6 +17,7 @@ from network import LANScanner
 class MainWindow(QtWidgets.QWidget):
     def __init__(self):
         QtWidgets.QWidget.__init__(self)
+        self.last_selected_pool_name = ""
         self.selected_pool = None
         self.initUI()
 
@@ -120,9 +121,13 @@ class MainWindow(QtWidgets.QWidget):
     
     # Refreshs the pools list.
     def update(self):
-        print("Update")
         self.poolsList.clear()
         self.loadPools()
+        for pool in self.pools:
+            if pool.name == self.last_selected_pool_name:
+                self.clientsList.clear()
+                for client in pool.clients:
+                    self.clientsList.addItem(client.hostname)
 
     # Create Pool
     def createPool(self):
@@ -183,6 +188,7 @@ class MainWindow(QtWidgets.QWidget):
     # Updates the clients list with selected pool clients.
     # self.selected_pool is set by clicking on item.
     def onPoolClicked(self, item):
+        self.last_selected_pool_name = item.text()
         for pool in self.pools:
             if pool.name == item.text():
                 self.selected_pool = pool
