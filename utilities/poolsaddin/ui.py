@@ -327,6 +327,13 @@ class AddClientWindow(QtWidgets.QWidget):
             if af_client.hostname == client.hostname:
                 return True
         return False
+    
+    # Checks if hostname is already in pool.
+    def isHostnameInSelectedPool(self, hostname):
+        for client in self.selected_pool.clients:
+            if hostname == client.hostname:
+                return True
+        return False
 
     # Loads the Afanasy clients.
     def loadAFClients(self):
@@ -371,9 +378,13 @@ class AddClientWindow(QtWidgets.QWidget):
         result = self.networkScanWindow.lanScannerThread.result
         for client in result:
             item = QtGui.QListWidgetItem(client)
+            hostname = utils.parseHostnameFromFormat(client)
             if "Hostname not found." in client:
                 item.setFlags(QtCore.Qt.NoItemFlags)
             item.setCheckState(QtCore.Qt.Unchecked)
+            if self.isHostnameInSelectedPool(hostname):
+                item.setFlags(QtCore.Qt.NoItemFlags)
+                item.setCheckState(QtCore.Qt.Checked)
             self.networkList.addItem(item)
 
     # Network segment scan on terminated callback.
@@ -403,27 +414,6 @@ class AddClientWindow(QtWidgets.QWidget):
                 hostnames.append(item.text())
                 i += 1
         return hostnames
-    
-    # Returns all Afanasy clients as QListWidgetItems
-    def getAfanasyClientsItems(self):
-        items = []
-        if self.clientsList.count() > 0:
-            i = 0
-            while i < self.clientsList.count():
-                item = self.clientsList.item(i)
-                items.append(item)
-                i += 1
-        return items
-    
-    # Filters for enabled and checked client items.
-    def filterAfanasyClientItems(self, clientsItems):
-        items = []
-        for clientItem in clientsItems:
-            flags = clientItem.flags()
-            checkState = clientItem.checkState()
-            if flags & QtCore.Qt.ItemIsEnabled and checkState == QtCore.Qt.Checked:
-                items.append(clientItem)
-        return items
 
     # Adds the selected Afanasy clients & hostnames.
     def save(self):
@@ -431,6 +421,10 @@ class AddClientWindow(QtWidgets.QWidget):
         for hostname in hostnames:
             print(hostname)
         
-        filteredClients = self.filterAfanasyClientItems(self.getAfanasyClientsItems())
-        for client in filteredClients:
+        filterAfClients = utils.filterForCheckedAndEnabledItems(utils.getQListWidgetItems(self.clientsList))
+        for client in filterAfClients:
+            print(client.text())
+        
+        filteredNetClients = utils.filterForCheckedAndEnabledItems(utils.getQListWidgetItems(self.networkList))
+        for client in filteredNetClients:
             print(client.text())
