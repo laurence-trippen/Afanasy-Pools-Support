@@ -283,6 +283,10 @@ class AddClientWindow(QtWidgets.QWidget):
     closed = QtCore.Signal()
     def __init__(self, selected_pool):
         QtWidgets.QWidget.__init__(self)
+
+        # All selected clients for database insert.
+        self.consolidatedClients = []
+        
         self.initSelectedPool(selected_pool)
         self.initUI()
         self.loadAFClients()
@@ -464,9 +468,6 @@ class AddClientWindow(QtWidgets.QWidget):
 
     # Adds the selected Afanasy clients & hostnames.
     def save(self):
-        # All selected clients for database insert.
-        self.consolidatedClients = []
-
         # Add all hostname strings to self.consolidatedClients[]
         hostnames = self.getHostnames()
         for hostname in hostnames:
