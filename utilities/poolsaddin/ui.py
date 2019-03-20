@@ -194,7 +194,7 @@ class MainWindow(QtWidgets.QWidget):
                 if response == QtGui.QMessageBox.Yes:
                     result = db.connection.pullClientFromPool(self.selected_pool.name, self.selected_client.hostname)
                     if result["acknowledged"]:
-                        self.clientsList.takeItem(self.clientsList.takeItem(self.clientsList.currentRow()))
+                        self.clientsList.takeItem(self.clientsList.currentRow())
                         self.pools = db.connection.findAllPools()
                     else:
                         msgBox = QtGui.QMessageBox(self)
