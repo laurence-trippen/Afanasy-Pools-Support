@@ -17,10 +17,14 @@ from network import LANScanner
 class MainWindow(QtWidgets.QWidget):
     def __init__(self):
         QtWidgets.QWidget.__init__(self)
+        self.initUI()
+        self.last_selected_pool_row = 0
+        self.last_selected_pool_item = self.poolsList.item(0)
         self.last_selected_pool_name = ""
+        self.last_selected_client_row = 0
+        self.last_selected_client_item = self.clientsList.item(0)
         self.last_selected_client_name = ""
         self.selected_pool = None
-        self.initUI()
 
     # UI Initialization
     def initUI(self):
@@ -130,6 +134,8 @@ class MainWindow(QtWidgets.QWidget):
                 self.clientsList.clear()
                 for client in pool.clients:
                     self.clientsList.addItem(client.hostname)
+        # self.clientsList.setCurrentRow(self.last_selected_client_row)
+        self.poolsList.setCurrentRow(self.last_selected_pool_row)
 
     # Create Pool
     def createPool(self):
@@ -214,6 +220,7 @@ class MainWindow(QtWidgets.QWidget):
     # Updates the clients list with selected pool clients.
     # self.selected_pool is set by clicking on item.
     def onPoolClicked(self, item):
+        self.last_selected_pool_row = self.poolsList.currentRow()
         self.last_selected_pool_item = item
         self.last_selected_pool_name = item.text()
         for pool in self.pools:
@@ -224,6 +231,7 @@ class MainWindow(QtWidgets.QWidget):
                     self.clientsList.addItem(client.hostname)
     
     def onClientClicked(self, item):
+        self.last_selected_client_row = self.clientsList.currentRow()
         self.last_selected_client_item = item
         self.last_selected_client_name = item.text()
 
