@@ -17,10 +17,9 @@ from network import LANScanner
 class MainWindow(QtWidgets.QWidget):
     def __init__(self):
         QtWidgets.QWidget.__init__(self)
-        self.last_selected_pool_name = ""
-        self.last_selected_client_name = ""
-        self.selected_pool = None
         self.initUI()
+        self.selected_pool = None
+        self.selected_client = None
 
     # UI Initialization
     def initUI(self):
@@ -120,16 +119,6 @@ class MainWindow(QtWidgets.QWidget):
         self.pools = db.connection.findAllPools()
         for pool in self.pools:
             self.poolsList.addItem(pool.name)
-    
-    # Refreshs the pools list.
-    def update(self):
-        self.poolsList.clear()
-        self.loadPools()
-        for pool in self.pools:
-            if pool.name == self.last_selected_pool_name:
-                self.clientsList.clear()
-                for client in pool.clients:
-                    self.clientsList.addItem(client.hostname)
 
     # Create Pool
     def createPool(self):
@@ -138,7 +127,8 @@ class MainWindow(QtWidgets.QWidget):
             pool = AF_RenderPool(text)
             result = db.connection.insertPool(pool)
             if result["acknowledged"]:
-                self.update()
+                self.poolsList.addItem(pool.name)
+                self.pools = db.connection.findAllPools()
             else:
                 msgBox = QtGui.QMessageBox(self)
                 msgBox.setWindowTitle("Error")
@@ -152,7 +142,8 @@ class MainWindow(QtWidgets.QWidget):
         if ok and str(text) != "":
             result = db.connection.updatePoolName(currentItem.text(), text)
             if result["acknowledged"]:
-                self.update()
+                self.poolsList.currentItem().setText(text)
+                self.pools = db.connection.findAllPools()
             else:
                 msgBox = QtGui.QMessageBox(self)
                 msgBox.setWindowTitle("Error")
@@ -169,13 +160,15 @@ class MainWindow(QtWidgets.QWidget):
         if response == QtGui.QMessageBox.Yes:
             result = db.connection.deletePool(currentItem.text())
             if result["acknowledged"]:
-                self.update()
+                self.poolsList.takeItem(self.poolsList.currentRow())
+                self.clientsList.clear()
+                self.pools = db.connection.findAllPools()
 
     # Add Client
     def addClient(self):
         if self.selected_pool != None:
             self.addClientWindow = AddClientWindow(self.selected_pool)
-            self.addClientWindow.closed.connect(self.update)
+            self.addClientWindow.closed.connect(self.onAddClientWindowClosed)
             self.addClientWindow.show()
         else:
             msgBox = QtGui.QMessageBox(self)
@@ -183,18 +176,26 @@ class MainWindow(QtWidgets.QWidget):
             msgBox.setText("No pool selected!")
             msgBox.exec_()
     
+    # Invoked if addClient dialog is closed.
+    # The method adds the added clients from the dialog in the clientList.
+    def onAddClientWindowClosed(self):
+        self.pools = db.connection.findAllPools()
+        for client in self.addClientWindow.consolidatedClients:
+            self.clientsList.addItem(client)
+
     # Remove Client
     def removeClient(self):
-        if self.selected_pool != None and self.last_selected_pool_name != "":
-            if self.last_selected_client_name != "":
+        if self.selected_pool != None:
+            if self.selected_client != None:
                 flags = QtGui.QMessageBox.StandardButton.Yes
                 flags |= QtGui.QMessageBox.StandardButton.No
-                question = "Do you realy want to delete the client '" + self.last_selected_client_name + "'?"
+                question = "Do you realy want to delete the client '" + self.selected_client.hostname + "'?"
                 response = QtGui.QMessageBox.question(self, "Question", question, flags)
                 if response == QtGui.QMessageBox.Yes:
-                    result = db.connection.pullClientFromPool(self.last_selected_pool_name, self.last_selected_client_name)
+                    result = db.connection.pullClientFromPool(self.selected_pool.name, self.selected_client.hostname)
                     if result["acknowledged"]:
-                        self.update()
+                        self.clientsList.takeItem(self.clientsList.currentRow())
+                        self.pools = db.connection.findAllPools()
                     else:
                         msgBox = QtGui.QMessageBox(self)
                         msgBox.setWindowTitle("Error")
@@ -214,8 +215,6 @@ class MainWindow(QtWidgets.QWidget):
     # Updates the clients list with selected pool clients.
     # self.selected_pool is set by clicking on item.
     def onPoolClicked(self, item):
-        self.last_selected_pool_item = item
-        self.last_selected_pool_name = item.text()
         for pool in self.pools:
             if pool.name == item.text():
                 self.selected_pool = pool
@@ -223,9 +222,13 @@ class MainWindow(QtWidgets.QWidget):
                 for client in pool.clients:
                     self.clientsList.addItem(client.hostname)
     
+    # self.selected_item is set by clicking on item.
     def onClientClicked(self, item):
-        self.last_selected_client_item = item
-        self.last_selected_client_name = item.text()
+        for pool in self.pools:
+            if pool.name == self.selected_pool.name:
+                for client in pool.clients:
+                    if client.hostname == item.text():
+                        self.selected_client = client
 
 # Network scan progress window.
 class NetworkScanWindow(QtWidgets.QWidget):
@@ -280,6 +283,10 @@ class AddClientWindow(QtWidgets.QWidget):
     closed = QtCore.Signal()
     def __init__(self, selected_pool):
         QtWidgets.QWidget.__init__(self)
+
+        # All selected clients for database insert.
+        self.consolidatedClients = []
+        
         self.initSelectedPool(selected_pool)
         self.initUI()
         self.loadAFClients()
@@ -461,31 +468,28 @@ class AddClientWindow(QtWidgets.QWidget):
 
     # Adds the selected Afanasy clients & hostnames.
     def save(self):
-        # All selected clients for database insert.
-        consolidatedClients = []
-
-        # Add all hostname strings to consolidatedClients[]
+        # Add all hostname strings to self.consolidatedClients[]
         hostnames = self.getHostnames()
         for hostname in hostnames:
-            if not hostname in consolidatedClients:
-                consolidatedClients.append(hostname)
+            if not hostname in self.consolidatedClients:
+                self.consolidatedClients.append(hostname)
         
-        # Add all selected afanasy clients to consolidatedClients[]
+        # Add all selected afanasy clients to self.consolidatedClients[]
         filterAfClients = utils.filterForCheckedAndEnabledItems(utils.getQListWidgetItems(self.clientsList))
         for client in filterAfClients:
             hostname = utils.parseHostnameFromFormat(client.text())
-            if not hostname in consolidatedClients:
-                consolidatedClients.append(hostname)
+            if not hostname in self.consolidatedClients:
+                self.consolidatedClients.append(hostname)
         
-        # Add all selected network clients to consolidatedClients[]
+        # Add all selected network clients to self.consolidatedClients[]
         filteredNetClients = utils.filterForCheckedAndEnabledItems(utils.getQListWidgetItems(self.networkList))
         for client in filteredNetClients:
             hostname = utils.parseHostnameFromFormat(client.text())
-            if not hostname in consolidatedClients:
-                consolidatedClients.append(hostname)
+            if not hostname in self.consolidatedClients:
+                self.consolidatedClients.append(hostname)
         
         # Pushs clients to selected pool in database.
-        for hostname in consolidatedClients:
+        for hostname in self.consolidatedClients:
             result = db.connection.pushClientToPool(self.selected_pool.name, AF_RenderClient(hostname, "", "", ""))
             if not result["acknowledged"]:
                 msgBox = QtGui.QMessageBox(self)
