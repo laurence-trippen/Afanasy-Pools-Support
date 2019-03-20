@@ -3,8 +3,8 @@ Provisionally Afanasy Pools Support. It's not the official implementation. it's 
 
 With the Afanasy Pools Addin you can create pools and assign them to clients. When you create an Afanasy job, whether using the AfStarter or a software plugin, you can always specify a pool for rendering.
 
-The pools are more a superficial solution and are not stored in the **Afanasy code**, so you don't see any pools in the **WebGUI** or in the **Afanasy Qt Gui**.
-If you are interested in how the workaround works, just look under 'How does it work?
+The pools are more a superficial solution and are not stored in the **Afanasy code**, so you don't see any pools in the **WebGUI** or in the **Afanasy Qt GUI**.
+If you are interested in how the workaround works, just look under: **'How does it work?'**
 
 ## Showcase
 
@@ -18,7 +18,7 @@ If you are interested in how the workaround works, just look under 'How does it 
 
 ## History. Why this project?
 
-On the **CGRU Afanasy Roadmap** a pool support is planned for the future. But since we needed a provisional pool solution in one project, we developed one ourselves which works through a workaround.
+On the [**CGRU Afanasy Roadmap**](http://cgru.info/roadmap) a pool support is planned for the future. But since we needed a provisional pool solution in one project, we developed one ourselves which works through a workaround.
 
 The project still has its weaknesses in some places, because it has been developed rapidly.
 If there are bugs, just create an issue in Github.
