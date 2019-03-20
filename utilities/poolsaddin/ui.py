@@ -18,6 +18,7 @@ class MainWindow(QtWidgets.QWidget):
     def __init__(self):
         QtWidgets.QWidget.__init__(self)
         self.last_selected_pool_name = ""
+        self.last_selected_client_name = ""
         self.selected_pool = None
         self.initUI()
 
@@ -62,6 +63,7 @@ class MainWindow(QtWidgets.QWidget):
         # Clients List
         self.clientsLabel = QtWidgets.QLabel("Clients")
         self.clientsList = QtWidgets.QListWidget()
+        self.clientsList.itemClicked.connect(self.onClientClicked)
 
         # Add Client Button
         self.addClientButton = QtWidgets.QPushButton("Add Client(s)")
@@ -183,15 +185,14 @@ class MainWindow(QtWidgets.QWidget):
     
     # Remove Client
     def removeClient(self):
-        if self.selected_pool != None:
-            if not self.clientsList.currentItem() is None:
-                clientItem = self.clientsList.currentItem()
+        if self.selected_pool != None and self.last_selected_pool_name != "":
+            if self.last_selected_client_name != "":
                 flags = QtGui.QMessageBox.StandardButton.Yes
                 flags |= QtGui.QMessageBox.StandardButton.No
-                question = "Do you realy want to delete the client '" + clientItem.text() + "'?"
+                question = "Do you realy want to delete the client '" + self.last_selected_client_name + "'?"
                 response = QtGui.QMessageBox.question(self, "Question", question, flags)
                 if response == QtGui.QMessageBox.Yes:
-                    result = db.connection.pullClientFromPool(self.poolsList.currentItem().text(), clientItem.text())
+                    result = db.connection.pullClientFromPool(self.last_selected_pool_name, self.last_selected_client_name)
                     if result["acknowledged"]:
                         self.update()
                     else:
@@ -213,14 +214,18 @@ class MainWindow(QtWidgets.QWidget):
     # Updates the clients list with selected pool clients.
     # self.selected_pool is set by clicking on item.
     def onPoolClicked(self, item):
+        self.last_selected_pool_item = item
         self.last_selected_pool_name = item.text()
-        self.last_pool_item = item
         for pool in self.pools:
             if pool.name == item.text():
                 self.selected_pool = pool
                 self.clientsList.clear()
                 for client in pool.clients:
                     self.clientsList.addItem(client.hostname)
+    
+    def onClientClicked(self, item):
+        self.last_selected_client_item = item
+        self.last_selected_client_name = item.text()
 
 # Network scan progress window.
 class NetworkScanWindow(QtWidgets.QWidget):
