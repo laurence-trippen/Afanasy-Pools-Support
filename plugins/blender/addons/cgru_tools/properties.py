@@ -8,7 +8,7 @@ from bpy.props import (
     EnumProperty
 )
 from . import utils
-
+import af
 
 class CGRUProperties(bpy.types.PropertyGroup):
     # General:
@@ -105,3 +105,7 @@ class CGRUProperties(bpy.types.PropertyGroup):
     mov_codecs = EnumProperty(
         name="Movie codec",
         items=utils.get_movie_codecs)
+
+    pools = EnumProperty(
+        name="Render Pool",
+        items=af.PoolsAddinAPI.getPools())

@@ -20,6 +20,7 @@ class RENDER_PT_Afanasy(bpy.types.Panel):
         col = layout.column()
         col.prop(cgru_props, 'jobname')
         col.prop(cgru_props, 'filepath')
+        col.prop(cgru_props, 'pools')
 
         layout.separator()
         row = layout.row(align=False)

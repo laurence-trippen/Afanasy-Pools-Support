@@ -3,6 +3,7 @@
 import os
 import sys
 import bpy
+import af
 
 CGRU_NOT_FOUND = 'NOT FOUND'
 
@@ -47,3 +48,7 @@ def get_movie_codecs(self, context):
         pass
 
     return codecs
+
+def get_all_pool_names():
+    
+    return ["Pool 1", "Pool 2"]
