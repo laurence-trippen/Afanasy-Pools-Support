@@ -34,7 +34,7 @@ If there are bugs, just create an issue on Github.
 
 ![](https://github.com/laurence-trippen/Afanasy-Pools-Addin/blob/master/Preview/plan.jpg?raw=true)
 
-# Pool emulation by hosts exclude mask.
+### Pool emulation by hosts exclude mask.
 
 ```python
 def get_excluded_hostnames(all_clients, pool_clients):
