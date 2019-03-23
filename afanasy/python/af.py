@@ -1197,11 +1197,13 @@ class MongoDB():
         return pools
 
 class PoolsAddinAPI():
+    pools = None
     @staticmethod
     def getPools(config):
         MongoDB.connection = MongoDB()
         MongoDB.connection.connect("mongodb://" + config["host"]  + ":" + str(config["port"]))
         pools = MongoDB.connection.findAllPools()
+        PoolsAddinAPI.pools = pools
         poolset = {("- No pool selected. -", "- No pool selected. -", "- No pool selected. -")}
         for pool in pools:
             name = pool["name"]

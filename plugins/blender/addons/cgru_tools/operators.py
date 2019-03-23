@@ -50,6 +50,8 @@ class CGRU_Submit(bpy.types.Operator):
     bl_idname = "cgru.submit"
     bl_label = "Submit Job"
 
+    selected_pool = None
+
     def execute(self, context):
         sce = context.scene
         cgru_props = sce.cgru
@@ -57,6 +59,9 @@ class CGRU_Submit(bpy.types.Operator):
         images = None
         engine_string = sce.render.engine
         sceneModified = False  # if the opriginal scene modified checker
+
+        # set selected pool (static)
+        CGRU_Submit.selected_pool = cgru_props.pools
 
         # Import Afanasy module:
         import af
@@ -177,6 +182,7 @@ class CGRU_Submit(bpy.types.Operator):
             block.setCommand(cmd)
             block.setNumeric(fstart, fend, fpertask, finc)
             block.setSequential(sequential)
+            block.setHostsMaskExclude(getHostsMaskExclude())
 
             job.blocks.append(block)
 
@@ -250,3 +256,39 @@ class CGRU_Submit(bpy.types.Operator):
             bpy.ops.wm.open_mainfile(filepath=scenefile + ".blend")
 
         return {'FINISHED'}
+
+def get_afanasy_hostnames():
+    import af
+    hostnames = []
+    cmd = af.Cmd()
+    clients = cmd.renderGetList()
+    for client in clients:
+        hostnames.append(client["name"])
+    return hostnames 
+
+def get_selected_pool_hostnames():
+    import af
+    hostnames = []
+    for pool in af.PoolsAddinAPI.pools:
+        if pool["name"] == CGRU_Submit.selected_pool:
+            clients = pool["clients"]
+            for client in clients:
+                hostnames.append(client["hostname"])
+    return hostnames
+
+def compute_excluded_hosts(all_clients, pool_clients):
+    excluded = []
+    for client in all_clients:
+        if not client in pool_clients:
+            excluded.append(client)
+    return excluded
+
+def getHostsMaskExclude():
+    af_hostnames = get_afanasy_hostnames()
+    included_hostnames = get_selected_pool_hostnames()
+    excluded_hostnames = compute_excluded_hosts(af_hostnames, included_hostnames)
+    regex_mask = ""
+    for excluded_host in excluded_hostnames:
+        regex_mask += excluded_host + "|"
+    regex_mask = regex_mask[:-1]
+    return regex_mask
