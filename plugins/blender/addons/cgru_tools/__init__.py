@@ -30,7 +30,6 @@ else:
     from . import utils
 
 import bpy
-import af
 
 def register():
     bpy.utils.register_module(__package__)
