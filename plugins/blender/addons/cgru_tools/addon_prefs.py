@@ -23,9 +23,19 @@ class CGRUAddonPreferences(AddonPreferences):
         name="CGRU version",
         default="NOT FOUND")
 
+    cgru_pool_server_host = StringProperty(
+        name="Pools MongoDB Host",
+        default="localhost")
+    
+    cgru_pool_server_port = StringProperty(
+        name="Pools MongoDB Port",
+        default="27017")
+
     def draw(self, context):
         layout = self.layout
         col = layout.column()
         col.label(text="Please, set CGRU install root location")
         col.prop(self, "cgru_location")
         col.label(text="CGRU version: %s" % self.cgru_version)
+        col.prop(self, "cgru_pool_server_host")
+        col.prop(self, "cgru_pool_server_port")
