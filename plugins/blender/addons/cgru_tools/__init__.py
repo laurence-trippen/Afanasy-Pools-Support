@@ -30,7 +30,7 @@ else:
     from . import utils
 
 import bpy
-
+import af
 
 def register():
     bpy.utils.register_module(__package__)
@@ -45,7 +45,6 @@ def register():
         prefs.cgru_location = os.environ["CGRU_LOCATION"]
     else:
         utils.add_cgru_module_to_syspath(prefs.cgru_location)
-
 
 def unregister():
     del bpy.types.Scene.cgru

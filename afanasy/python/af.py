@@ -1174,8 +1174,8 @@ import pymongo
 class MongoDB():
     POOLS_DATABSE       = "afpools"
     POOLS_COLLECTION    = "pools"
-    status = None
-    connection = None
+    status              = None
+    connection          = None
 
     # Establishs the connection to MongoDB database.
     def connect(self, connection):
@@ -1198,9 +1198,9 @@ class MongoDB():
 
 class PoolsAddinAPI():
     @staticmethod
-    def getPools():
+    def getPools(config):
         MongoDB.connection = MongoDB()
-        MongoDB.connection.connect("mongodb://192.168.1.107:27017")
+        MongoDB.connection.connect("mongodb://" + config["host"]  + ":" + str(config["port"]))
         pools = MongoDB.connection.findAllPools()
         poolset = {("- No pool selected. -", "- No pool selected. -", "- No pool selected. -")}
         for pool in pools:

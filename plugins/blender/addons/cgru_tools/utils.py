@@ -4,6 +4,7 @@ import os
 import sys
 import bpy
 import af
+import json
 
 CGRU_NOT_FOUND = 'NOT FOUND'
 
@@ -49,6 +50,14 @@ def get_movie_codecs(self, context):
 
     return codecs
 
-def get_all_pool_names():
-    
-    return ["Pool 1", "Pool 2"]
+def get_afpools_config():
+    path = os.path.join(os.environ["CGRU_LOCATION"], "utilities", "poolsaddin", "config.json")
+    config = {
+        "host":"localhost",
+        "port":"27017"
+    }
+    with open(path) as json_file:
+        data = json.load(json_file)
+        config["host"] = data["mongodb_host"]
+        config["port"] = data["mongodb_port"]
+    return config
