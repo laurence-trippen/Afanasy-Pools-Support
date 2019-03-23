@@ -4,7 +4,6 @@ Provisionally Afanasy Pools Support. It's not the official implementation. it's 
 With the Afanasy Pools Addin you can create pools and assign clients to them. When you create an Afanasy job, whether using the AfStarter or a software plugin, you can always specify a pool for rendering.
 
 The pools are more a superficial solution and are not stored in the **Afanasy's code**, so you don't see any pools in the [**Afanasy Web GUI**](http://cgru.info/afanasy/gui#web) or in the [**Afanasy Qt GUI**](http://cgru.info/afanasy/gui#page_top).
-If you are interested in how the workaround works, just look under: **'How does it work?'**
 
 ## CGRU - Afanasy Render Manager
 
@@ -34,5 +33,16 @@ If there are bugs, just create an issue on Github.
 ## How does it works?
 
 ![](https://github.com/laurence-trippen/Afanasy-Pools-Addin/blob/master/Preview/plan.jpg?raw=true)
+
+# Pool emulation by hosts exclude mask.
+
+```python
+def get_excluded_hostnames(all_clients, pool_clients):
+  excluded = []
+  for client in all_clients:
+    if not client in pool_clients:
+      excluded.append(client)
+  return excluded
+```
 
 
