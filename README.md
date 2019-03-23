@@ -10,7 +10,7 @@ If you are interested in how the workaround works, just look under: **'How does 
 
 [CGRU Afanasy Website](http://cgru.info/afanasy/afanasy)
 
-## Showcase
+## Afanasy Pool Manager
 
 ![](https://github.com/laurence-trippen/Afanasy-Pools-Addin/blob/master/Preview/keeperaddin.jpg?raw=true)
 ![](https://github.com/laurence-trippen/Afanasy-Pools-Addin/blob/master/Preview/mainview.JPG?raw=true)
@@ -19,6 +19,10 @@ If you are interested in how the workaround works, just look under: **'How does 
 ![](https://github.com/laurence-trippen/Afanasy-Pools-Addin/blob/master/Preview/addclients.JPG?raw=true)
 ![](https://github.com/laurence-trippen/Afanasy-Pools-Addin/blob/master/Preview/networkscan.JPG?raw=true)
 ![](https://github.com/laurence-trippen/Afanasy-Pools-Addin/blob/master/Preview/addhostname.JPG?raw=true)
+
+## Blender Pool Integration
+![](https://github.com/laurence-trippen/Afanasy-Pools-Addin/blob/master/Preview/blender-plugin-pools.jpg?raw=true)
+![](https://github.com/laurence-trippen/Afanasy-Pools-Addin/blob/master/Preview/blender-plugin-select-pool.jpg?raw=true)
 
 ## History - Why this project?
 
