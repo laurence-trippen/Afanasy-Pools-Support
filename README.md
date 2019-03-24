@@ -1,20 +1,33 @@
 # Afanasy Pools Addin <img src="https://github.com/laurence-trippen/Afanasy-Pools-Addin/blob/master/Preview/afpools2.png" align="right" width="128">
-A provisionally [CGRU](http://cgru.info/) pools implementation. It's not the official implementation. It's more of a workaround.
+A provisionally pools implementation for the open-source render manager [CGRU](http://cgru.info/). It's not the official implementation. It's more of a workaround.
 
 With the **Afanasy Pools Addin** you can create pools and assign clients to them. When you create an Afanasy job, whether using the [AfStarter](http://cgru.info/afstarter) or a [software plugin](http://cgru.info/software/blender), you can always specify a pool for rendering.
 
 The pools are more a superficial solution and are not stored in the **Afanasy's code**, so you don't see any pools in the [Afanasy Web GUI](http://cgru.info/afanasy/gui#web) or in the [Afanasy Qt GUI](http://cgru.info/afanasy/gui#page_top).
 
-[CGRU - Afanasy Render Manager](http://cgru.info/afanasy/afanasy)
-
 ## Why this project?
 
-On the [**CGRU Roadmap**](http://cgru.info/roadmap) a pool support is planned for the future. But since we needed a provisional pool solution in one project, we developed one ourselves which works through a workaround.
+On the [CGRU Roadmap](http://cgru.info/roadmap) a pool support is planned for the future. But since we needed a provisional pool solution in one project, we developed one ourselves which works through a workaround.
 
 The project still has its weaknesses in some places, because it has been developed rapidly.
 If there are bugs, just create an [issue on Github](https://github.com/laurence-trippen/Afanasy-Pools-Addin/issues).
 
 ## How does it works?
+The implementation consists of three important components:
+
+#### 1. MongoDB database
+All pools and their associated clients are stored in the MongoDB database.
+
+#### 2. Afanasy Pool Manager
+With the Afanasy Pool Manager you can create, edit and delete pools in the MongoDB database.
+Clients can also be added to or removed from these pools.
+
+#### 3. pool selection at job submssion
+In CGRU, render jobs can be sent to the server in various ways.
+Until now it is planned that pools can be specified in the [AfStarter](http://cgru.info/afstarter) and [Blender plugin](http://cgru.info/software/blender).
+These plugins and programs also access the MongoDB database.
+
+### Structure as Schema
 
 ![](https://github.com/laurence-trippen/Afanasy-Pools-Addin/blob/master/Preview/plan.jpg?raw=true)
 
@@ -57,9 +70,12 @@ def get_excluded_hostnames(all_renderfarm_hostnames, pool_hostnames):
 
 ## Showcase
 
-### Afanasy Pool Manager
+### Start Afanasy Pool Manager from Keeper
 
 ![](https://github.com/laurence-trippen/Afanasy-Pools-Addin/blob/master/Preview/keeperaddin.jpg?raw=true)
+
+### Afanasy Pool Manager
+
 ![](https://github.com/laurence-trippen/Afanasy-Pools-Addin/blob/master/Preview/mainview.JPG?raw=true)
 ![](https://github.com/laurence-trippen/Afanasy-Pools-Addin/blob/master/Preview/createpool.JPG?raw=true)
 ![](https://github.com/laurence-trippen/Afanasy-Pools-Addin/blob/master/Preview/deletepool.JPG?raw=true)
