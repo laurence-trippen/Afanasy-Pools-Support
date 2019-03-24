@@ -84,9 +84,8 @@ def get_excluded_hostnames(all_renderfarm_hostnames, pool_hostnames):
 * [ ] Easy installation
 
 ## Installation
-
 Coming soon.
-![](https://media.giphy.com/media/uPeblKaa25xy8/giphy.gif)
+![](https://media.giphy.com/media/70Asu3n7btVgk/giphy.gif)
 
 ## Showcase
 
