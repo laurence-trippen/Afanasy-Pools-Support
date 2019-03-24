@@ -16,6 +16,10 @@ If there are bugs, just create an [issue on Github](https://github.com/laurence-
 
 ## How does it works?
 
+![](https://github.com/laurence-trippen/Afanasy-Pools-Addin/blob/master/Preview/plan.jpg?raw=true)
+
+### Pool emulation by hosts exclude mask.
+
 For every Afanasy render job you can specify a hosts exclude mask.
 In this mask individual render clients can be excluded from a job by a [regular expression](https://en.wikipedia.org/wiki/Regular_expression).
 
@@ -36,25 +40,24 @@ Let's define a pool where **pc-01** and **pc-03** are contained.
 From this pool the following mask would have to be generated, so that on the
 Render Farm, the job can only be executed with **pc-01** and **pc-03**.
 
-Generated mask to run job on renderfarm with **pc-01** and **pc-03**.
+Generated mask to run job on renderfarm with **pc-01** and **pc-03**:
 ```Regular Expression
 pc-02|pc-04|pc-05
 ```
 
-![](https://github.com/laurence-trippen/Afanasy-Pools-Addin/blob/master/Preview/plan.jpg?raw=true)
-
-### Pool emulation by hosts exclude mask.
-
+This simple algorithm is used to generate an excluded client list from the included pool clients.
 ```python
-def get_excluded_hostnames(all_clients, pool_clients):
-  excluded = []
-  for client in all_clients:
-    if not client in pool_clients:
-      excluded.append(client)
-  return excluded
+def get_excluded_hostnames(all_renderfarm_hostnames, pool_hostnames):
+  excluded_hostnames = []
+  for hostname in all_renderfarm_hostnames:
+    if not hostname in pool_hostnames:
+      excluded_hostnames.append(hostname)
+  return excluded_hostnames
 ```
 
-## Afanasy Pool Manager
+## Showcase
+
+### Afanasy Pool Manager
 
 ![](https://github.com/laurence-trippen/Afanasy-Pools-Addin/blob/master/Preview/keeperaddin.jpg?raw=true)
 ![](https://github.com/laurence-trippen/Afanasy-Pools-Addin/blob/master/Preview/mainview.JPG?raw=true)
@@ -64,6 +67,6 @@ def get_excluded_hostnames(all_clients, pool_clients):
 ![](https://github.com/laurence-trippen/Afanasy-Pools-Addin/blob/master/Preview/networkscan.JPG?raw=true)
 ![](https://github.com/laurence-trippen/Afanasy-Pools-Addin/blob/master/Preview/addhostname.JPG?raw=true)
 
-## Blender Pool Integration
+### Blender Pool Integration
 ![](https://github.com/laurence-trippen/Afanasy-Pools-Addin/blob/master/Preview/blender-plugin-pools.jpg?raw=true)
 ![](https://github.com/laurence-trippen/Afanasy-Pools-Addin/blob/master/Preview/blender-plugin-select-pool.jpg?raw=true)
