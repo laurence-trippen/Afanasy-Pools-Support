@@ -7,8 +7,8 @@ The pools are more a superficial solution and are not stored in the **Afanasy's 
 
 ## Overview
 
-[Why this project?](## Why this project?)
-[How does it works?](## How does it works?)
+[Why this project?](##Why this project?)
+[How does it works?](##How does it works?)
 
 ## Why this project?
 
