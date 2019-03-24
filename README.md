@@ -9,9 +9,9 @@ The pools are more a superficial solution and are not stored in the **Afanasy's 
 
 ## Why this project?
 
-On the [CGRU Roadmap](http://cgru.info/roadmap) a pool support is planned for the future.<br/> But since we needed a provisional pool solution in one project, we developed one ourselves which works through a workaround.
+On the [CGRU Roadmap](http://cgru.info/roadmap) a pool support is planned for the future.<br/> But since we needed a provisional pool solution in one project, we developed<br/> one ourselves which works through a workaround.
 
-The project still has its weaknesses in some places, because it has been developed rapidly.
+The project still has its weaknesses in some places, because it has been developed rapidly.<br/>
 If there are bugs, just create an [issue on Github](https://github.com/laurence-trippen/Afanasy-Pools-Addin/issues).
 
 ## How does it works?
