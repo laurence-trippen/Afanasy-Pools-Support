@@ -22,7 +22,7 @@ All pools and their associated clients are stored in the MongoDB database.
 With the Afanasy Pool Manager you can create, edit and delete pools in the MongoDB database.
 Clients can also be added to or removed from these pools.
 
-#### 3. pool selection at job submssion
+#### 3. Pool selection at job submssion
 In CGRU, render jobs can be sent to the server in various ways.
 Until now it is planned that pools can be specified in the [AfStarter](http://cgru.info/afstarter) and [Blender plugin](http://cgru.info/software/blender).
 These plugins and programs also access the MongoDB database.
@@ -67,6 +67,23 @@ def get_excluded_hostnames(all_renderfarm_hostnames, pool_hostnames):
       excluded_hostnames.append(hostname)
   return excluded_hostnames
 ```
+
+## Features & Future plans
+
+* [x] Pool Manager is startable from Keeper.
+* [x] Create, Edit, Delete pools.
+* [x] Add/Remove clients to pools.
+* [x] Add online and offline afanasy clients to pool.
+* [x] Network scan
+* [x] PyMongo installation script for afanasy's embedded Python.
+* [x] Blender plugin pool integration.
+* [ ] AfStarter pool integration.
+* [ ] Offline PyMongo installation for Blender and Afanasy.
+* [ ] Easy installation
+
+## Installation
+
+Coming soon.
 
 ## Showcase
 
