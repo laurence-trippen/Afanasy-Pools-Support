@@ -1,14 +1,11 @@
 # Afanasy Pools Addin <img src="https://github.com/laurence-trippen/Afanasy-Pools-Addin/blob/master/Preview/afpools2.png" align="right" width="128">
-A provisionally pools implementation for the open-source render manager [CGRU](http://cgru.info/). It's not the official implementation. It's more of a workaround.
+A provisionally pools implementation for the open-source render manager [CGRU](http://cgru.info/).<br/>
+It's not the official implementation. It's more of a workaround.
 
-With the **Afanasy Pools Addin** you can create pools and assign clients to them. When you create an Afanasy job, whether using the [AfStarter](http://cgru.info/afstarter) or a [software plugin](http://cgru.info/software/blender), you can always specify a pool for rendering.
+With the **Afanasy Pools Addin** you can create pools and assign clients to them.<br/>
+When you create an Afanasy job, whether using the [AfStarter](http://cgru.info/afstarter) or a [software plugin](http://cgru.info/software/blender), you can always specify a pool for rendering.
 
 The pools are more a superficial solution and are not stored in the **Afanasy's code**, so you don't see any pools in the [Afanasy Web GUI](http://cgru.info/afanasy/gui#web) or in the [Afanasy Qt GUI](http://cgru.info/afanasy/gui#page_top).
-
-## Overview
-
-[Why this project?](##Why this project?)
-[How does it works?](##How does it works?)
 
 ## Why this project?
 
