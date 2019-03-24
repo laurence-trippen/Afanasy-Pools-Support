@@ -5,6 +5,11 @@ With the **Afanasy Pools Addin** you can create pools and assign clients to them
 
 The pools are more a superficial solution and are not stored in the **Afanasy's code**, so you don't see any pools in the [Afanasy Web GUI](http://cgru.info/afanasy/gui#web) or in the [Afanasy Qt GUI](http://cgru.info/afanasy/gui#page_top).
 
+## Overview
+
+[Why this project?](## Why this project?)
+[How does it works?](## How does it works?)
+
 ## Why this project?
 
 On the [CGRU Roadmap](http://cgru.info/roadmap) a pool support is planned for the future. But since we needed a provisional pool solution in one project, we developed one ourselves which works through a workaround.
