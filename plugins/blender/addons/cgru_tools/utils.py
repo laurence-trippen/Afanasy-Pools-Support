@@ -51,7 +51,7 @@ def get_movie_codecs(self, context):
     return codecs
 
 def get_afpools_config():
-    path = os.path.join(os.environ["CGRU_LOCATION"], "utilities", "poolsaddin", "config.json")
+    path = os.path.join(os.environ["CGRU_LOCATION"], "utilities", "poolssupport", "poolmanager", "config.json")
     config = {
         "host":"localhost",
         "port":"27017"

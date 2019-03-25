@@ -12,7 +12,7 @@ import json
 class Config():
     mongodb_host = 'localhost'
     mongodb_port = 27017
-    path = os.path.join(os.environ["CGRU_LOCATION"], "utilities", "poolsaddin", "config.json")
+    path = os.path.join(os.environ["CGRU_LOCATION"], "utilities", "poolssupport", "poolmanager", "config.json")
 
     # If config does not exist, it will be created with the default settings.
     @staticmethod
