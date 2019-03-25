@@ -1,6 +1,6 @@
 # Afanasy Pools Support <img src="https://github.com/laurence-trippen/Afanasy-Pools-Support/blob/master/Preview/afpools2.png" align="right" width="128">
 A provisionally pools implementation for the open-source render manager [CGRU](http://cgru.info/).<br/>
-It's not the official implementation. It's more of a workaround.
+It's **not the official implementation.** It's more of a workaround.
 
 With **Afanasy Pools Support** you can create pools and assign clients to them.<br/>
 When you create an Afanasy job, whether using the [AfStarter](http://cgru.info/afstarter) or a [software plugin](http://cgru.info/software/blender), you can<br/> always specify a pool for rendering.
