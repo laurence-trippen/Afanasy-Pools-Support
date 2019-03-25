@@ -1,4 +1,4 @@
-# Afanasy Pools Support <img src="https://github.com/laurence-trippen/Afanasy-Pools-Addin/blob/master/Preview/afpools2.png" align="right" width="128">
+# Afanasy Pools Support <img src="https://github.com/laurence-trippen/Afanasy-Pools-Support/blob/master/Preview/afpools2.png" align="right" width="128">
 A provisionally pools implementation for the open-source render manager [CGRU](http://cgru.info/).<br/>
 It's not the official implementation. It's more of a workaround.
 
@@ -12,7 +12,7 @@ The pools are more a superficial solution and are not stored in the **Afanasy's 
 On the [CGRU Roadmap](http://cgru.info/roadmap) a pool support is planned for the future.<br/> But since we needed a provisional pool solution in one project, we developed<br/> one ourselves which works through a workaround.
 
 The project still has its weaknesses in some places, because it has been developed rapidly.<br/>
-If there are bugs, just create an [issue on Github](https://github.com/laurence-trippen/Afanasy-Pools-Addin/issues).
+If there are bugs, just create an [issue on Github](https://github.com/laurence-trippen/Afanasy-Pools-Support/issues).
 
 ## How does it works?
 The implementation consists of three important components:
@@ -31,7 +31,7 @@ These plugins and programs also access the MongoDB database.
 
 ### Structure as Schema
 
-![](https://github.com/laurence-trippen/Afanasy-Pools-Addin/blob/master/Preview/plan.jpg?raw=true)
+![](https://github.com/laurence-trippen/Afanasy-Pools-Support/blob/master/Preview/plan.jpg?raw=true)
 
 ### Pool emulation by hosts exclude mask.
 
@@ -90,17 +90,17 @@ Coming soon.
 
 ### Start Afanasy Pool Manager from Keeper
 
-![](https://github.com/laurence-trippen/Afanasy-Pools-Addin/blob/master/Preview/keeperaddin.jpg?raw=true)
+![](https://github.com/laurence-trippen/Afanasy-Pools-Support/blob/master/Preview/keeperaddin.jpg?raw=true)
 
 ### Afanasy Pool Manager
 
-![](https://github.com/laurence-trippen/Afanasy-Pools-Addin/blob/master/Preview/mainview.JPG?raw=true)
-![](https://github.com/laurence-trippen/Afanasy-Pools-Addin/blob/master/Preview/createpool.JPG?raw=true)
-![](https://github.com/laurence-trippen/Afanasy-Pools-Addin/blob/master/Preview/deletepool.JPG?raw=true)
-![](https://github.com/laurence-trippen/Afanasy-Pools-Addin/blob/master/Preview/addclients.JPG?raw=true)
-![](https://github.com/laurence-trippen/Afanasy-Pools-Addin/blob/master/Preview/networkscan.JPG?raw=true)
-![](https://github.com/laurence-trippen/Afanasy-Pools-Addin/blob/master/Preview/addhostname.JPG?raw=true)
+![](https://github.com/laurence-trippen/Afanasy-Pools-Support/blob/master/Preview/mainview.JPG?raw=true)
+![](https://github.com/laurence-trippen/Afanasy-Pools-Support/blob/master/Preview/createpool.JPG?raw=true)
+![](https://github.com/laurence-trippen/Afanasy-Pools-Support/blob/master/Preview/deletepool.JPG?raw=true)
+![](https://github.com/laurence-trippen/Afanasy-Pools-Support/blob/master/Preview/addclients.JPG?raw=true)
+![](https://github.com/laurence-trippen/Afanasy-Pools-Support/blob/master/Preview/networkscan.JPG?raw=true)
+![](https://github.com/laurence-trippen/Afanasy-Pools-Support/blob/master/Preview/addhostname.JPG?raw=true)
 
 ### Blender Pool Integration
-![](https://github.com/laurence-trippen/Afanasy-Pools-Addin/blob/master/Preview/blender-plugin-pools.jpg?raw=true)
-![](https://github.com/laurence-trippen/Afanasy-Pools-Addin/blob/master/Preview/blender-plugin-select-pool.jpg?raw=true)
+![](https://github.com/laurence-trippen/Afanasy-Pools-Support/blob/master/Preview/blender-plugin-pools.jpg?raw=true)
+![](https://github.com/laurence-trippen/Afanasy-Pools-Support/blob/master/Preview/blender-plugin-select-pool.jpg?raw=true)
