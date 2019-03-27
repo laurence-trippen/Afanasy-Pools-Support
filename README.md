@@ -79,7 +79,7 @@ def get_excluded_hostnames(all_renderfarm_hostnames, pool_hostnames):
 * [x] Network scan
 * [x] PyMongo installation script for afanasy's embedded Python.
 * [x] Blender plugin pool integration.
-* [ ] AfStarter pool integration.
+* [x] AfStarter pool integration.
 * [ ] Offline PyMongo installation for Blender and Afanasy.
 * [ ] Easy installation
 
@@ -104,3 +104,7 @@ Coming soon.
 ### Blender Pool Integration
 ![](https://github.com/laurence-trippen/Afanasy-Pools-Support/blob/master/Preview/blender-plugin-pools.jpg?raw=true)
 ![](https://github.com/laurence-trippen/Afanasy-Pools-Support/blob/master/Preview/blender-plugin-select-pool.jpg?raw=true)
+
+### AfStarter Pool Integration
+![](https://github.com/laurence-trippen/Afanasy-Pools-Support/blob/master/Preview/afstarter-support-1.JPG?raw=true)
+![](https://github.com/laurence-trippen/Afanasy-Pools-Support/blob/master/Preview/afstarter-support-2.JPG?raw=true)
