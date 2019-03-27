@@ -104,3 +104,7 @@ Coming soon.
 ### Blender Pool Integration
 ![](https://github.com/laurence-trippen/Afanasy-Pools-Support/blob/master/Preview/blender-plugin-pools.jpg?raw=true)
 ![](https://github.com/laurence-trippen/Afanasy-Pools-Support/blob/master/Preview/blender-plugin-select-pool.jpg?raw=true)
+
+### AfStarter Pool Integration
+![](https://github.com/laurence-trippen/Afanasy-Pools-Support/blob/master/Preview/afstarter-support-1.JPG?raw=true)
+![](https://github.com/laurence-trippen/Afanasy-Pools-Support/blob/master/Preview/afstarter-support-2.JPG?raw=true)
