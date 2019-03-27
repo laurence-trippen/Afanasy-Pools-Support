@@ -79,7 +79,7 @@ def get_excluded_hostnames(all_renderfarm_hostnames, pool_hostnames):
 * [x] Network scan
 * [x] PyMongo installation script for afanasy's embedded Python.
 * [x] Blender plugin pool integration.
-* [ ] AfStarter pool integration.
+* [x] AfStarter pool integration.
 * [ ] Offline PyMongo installation for Blender and Afanasy.
 * [ ] Easy installation
 
