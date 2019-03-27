@@ -67,6 +67,7 @@ class PoolServer():
                         pools = af.MongoDB.connection.findAllPools()
                         pools_json = dumps(pools)
                         client.send(pools_json.encode())
+                        af.MongoDB.connection.close()
                 client.close()
             except:
                 client.close()
