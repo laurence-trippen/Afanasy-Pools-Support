@@ -1196,15 +1196,15 @@ class MongoDB():
             pools.append(pool)
         return pools
 
-class PoolsAddinAPI():
+class PoolsSupportAPI():
     pools = None
     @staticmethod
     def getPools(config):
         MongoDB.connection = MongoDB()
         MongoDB.connection.connect("mongodb://" + config["host"]  + ":" + str(config["port"]))
         pools = MongoDB.connection.findAllPools()
-        PoolsAddinAPI.pools = pools
-        poolset = {("- No pool selected. -", "- No pool selected. -", "- No pool selected. -")}
+        PoolsSupportAPI.pools = pools
+        poolset = {("- Don't use pool. -", "- Don't use pool. -", "- Don't use pool. -")}
         for pool in pools:
             name = pool["name"]
             pool_tuple_item = (name, name, name)

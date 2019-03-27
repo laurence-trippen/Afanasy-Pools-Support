@@ -108,4 +108,4 @@ class CGRUProperties(bpy.types.PropertyGroup):
 
     pools = EnumProperty(
         name="Render Pool",
-        items=af.PoolsAddinAPI.getPools(utils.get_afpools_config()))
+        items=af.PoolsSupportAPI.getPools(utils.get_afpools_config()))

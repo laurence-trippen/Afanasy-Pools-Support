@@ -269,7 +269,7 @@ def get_afanasy_hostnames():
 def get_selected_pool_hostnames():
     import af
     hostnames = []
-    for pool in af.PoolsAddinAPI.pools:
+    for pool in af.PoolsSupportAPI.pools:
         if pool["name"] == CGRU_Submit.selected_pool:
             clients = pool["clients"]
             for client in clients:
