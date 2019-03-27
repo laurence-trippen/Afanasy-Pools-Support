@@ -1005,7 +1005,8 @@ class Dialog(QtWidgets.QWidget):
                         regex_mask += excluded_hostname + "|"
                     if regex_mask.endswith("|"):
                         regex_mask = regex_mask[:-1]
-                    cmd += ' -hostsexcl "%s"' % regex_mask
+                    if regex_mask != "":
+                        cmd += ' -hostsexcl "%s"' % regex_mask
 
         if self.fields['paused'].isChecked():
             cmd += ' -pause'
