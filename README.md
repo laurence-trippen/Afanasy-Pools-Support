@@ -1,4 +1,3 @@
-[![CGRU Version][2.2.3]]
 # Afanasy Pools Support <img src="https://github.com/laurence-trippen/Afanasy-Pools-Support/blob/master/Preview/afpools2.png" align="right" width="128">
 A provisionally pools implementation for the open-source render manager [CGRU](http://cgru.info/).<br/>
 It's **not the official implementation.** It's more of a workaround.
