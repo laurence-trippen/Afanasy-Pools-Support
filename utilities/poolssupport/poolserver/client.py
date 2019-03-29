@@ -5,25 +5,19 @@
 # Program: Afanasy Pool Server - Client
 
 import socket
-import sys
+import protocol
+import json
 
-try:
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-except socket.error:
-    print("Failed to connect!")
-    sys.exit()
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+    sock.connect(("127.0.0.1", 9999))
+    sock.sendall(protocol.request(protocol.GET_POOLS).encode("utf-8"))
 
-print("Socket created!")
-
-host = "www.google.com"
-port = 80
-
-try:
-    remote_ip = socket.gethostbyname(host)
-except socket.gaierror:
-    print("Hostname could not be resolved!")
-    sys.exit()
-
-print("IP Address: " + remote_ip)
-
-sock.connect((remote_ip, port))
+    data = sock.recv(1024)
+    if data:
+        msg = json.loads(data.decode("utf-8"))
+        print(msg)
+        if msg["type"] == "response":
+            size = msg["size"]
+            data = sock.recv(size)
+            if data:
+                print(data.decode("utf-8"))

@@ -6,18 +6,21 @@
 
 import os
 import sys
-import json
 import socket
+import protocol
 import threading
+import json
 import utils
-import af
+import pymongo
 
 from bson.json_util import dumps
 from config import Config
 
+
 # Multithreaded TCP socket server
 class PoolServer():
     def __init__(self):
+        self.connection_counter = 0
         self.mongodb_host = "localhost"
         self.mongodb_port = "27017"
 
@@ -38,32 +41,42 @@ class PoolServer():
             self.server_socket.listen(max_connections)
             while True:
                 client, addr = self.server_socket.accept()
+                self.connection_counter += 1
                 utils.server_log("Connection has been established [" + addr[0] + ":" + str(addr[1]) + "]")
                 client.settimeout(60)
-                threading.Thread(target=self.handleClient, args=(client, addr)).start()
+                threading.Thread(target=self.handle_client, name="Connection Thread " + str(self.connection_counter),
+                                 args=(client, addr)).start()
         except socket.error as e:
             utils.server_log("Socket error: " + str(e))
             sys.exit()
-    
+
     # Client connection thread handler.
     # It's a simple stateless question and answer protocol like HTTP 1.1
-    def handleClient(self, client, address):
-        buffer_size = 1024
+    def handle_client(self, client, address):
         while True:
             try:
-                data = client.recv(buffer_size)
+                data = client.recv(1024)
                 if data:
-                    msg = data.decode("utf-8")
-                    if msg == "get_all_pools()":
-                        af.MongoDB.connection = af.MongoDB()
-                        af.MongoDB.connection.connect("mongodb://" + self.mongodb_host + ":" + self.mongodb_port)
-                        pools = af.MongoDB.connection.findAllPools()
-                        pools_json = dumps(pools)
-                        client.send(pools_json.encode())
-                        af.MongoDB.connection.close()
+                    msg = json.loads(data.decode("utf-8"))
+                    utils.server_log(msg)
+                    if msg["type"] == "request":
+                        command = msg["command"]
+                        if command == protocol.GET_POOLS:
+                            mongo_client = pymongo.MongoClient(
+                                'mongodb://' + self.mongodb_host + ":" + self.mongodb_port)
+                            poolsdb = mongo_client["afpools"]
+                            poolscol = poolsdb["pools"]
+                            poolscol.create_index("name", unique=True)
+                            pools = []
+                            for pool in poolscol.find():
+                                pools.append(pool)
+                            pools_json = dumps(pools)
+                            client.send(protocol.response(len(pools_json.encode("utf-8"))).encode("utf-8"))
+                            client.send(pools_json.encode("utf-8"))
                 client.close()
             except:
                 client.close()
+
 
 if __name__ == "__main__":
     # CGRU_LOCATION environment variable is needed for execution.
