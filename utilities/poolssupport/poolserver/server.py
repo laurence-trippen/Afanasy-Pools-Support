@@ -57,7 +57,6 @@ class PoolServer():
                 data = client.recv(1024)
                 if data:
                     msg = json.loads(data.decode("utf-8"))
-                    print(msg)
                     if msg["type"] == "request":
                         command = msg["command"]
                         if command == protocol.GET_POOLS:
