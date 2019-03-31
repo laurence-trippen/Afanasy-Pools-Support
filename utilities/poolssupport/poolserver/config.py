@@ -10,7 +10,7 @@ import json
 # Access to local config.json
 # Maybe this can be stored later in the CGRU config.
 class Config():
-    ip = ''
+    ip = ""
     port = 9999
     max_clients = 32
     path = os.path.join(os.environ["CGRU_LOCATION"], "utilities", "poolssupport", "poolserver", "config.json")

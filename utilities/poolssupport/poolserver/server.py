@@ -16,7 +16,6 @@ import pymongo
 from bson.json_util import dumps
 from config import Config
 
-
 # Multithreaded TCP socket server
 class PoolServer():
     def __init__(self):
@@ -58,7 +57,7 @@ class PoolServer():
                 data = client.recv(1024)
                 if data:
                     msg = json.loads(data.decode("utf-8"))
-                    utils.server_log(msg)
+                    print(msg)
                     if msg["type"] == "request":
                         command = msg["command"]
                         if command == protocol.GET_POOLS:
@@ -79,23 +78,22 @@ class PoolServer():
 
 
 if __name__ == "__main__":
-    # CGRU_LOCATION environment variable is needed for execution.
     if "CGRU_LOCATION" in os.environ:
         utils.server_log("CGRU_LOCATION=" + os.environ['CGRU_LOCATION'])
     else:
         utils.server_log("CGRU_LOCATION is not set!")
         sys.exit()
 
-    # Loads MongoDB ip and port config
+    # Loads Mongo DB config
     mongodb_config = utils.get_mongodb_config()
 
-    # Loads server config.
+    # Loads pool server config
     Config.check()
     Config.load()
 
-    # Pool Server creation.
+    # Pool server setup
     poolServer = PoolServer()
     poolServer.mongodb_host = mongodb_config["host"]
-    poolServer.mongodb_port = mongodb_config["port"]
+    poolServer.mongodb_port = str(mongodb_config["port"])
     poolServer.bind(Config.ip, Config.port)
     poolServer.listen(Config.max_clients)
