@@ -15,7 +15,7 @@ The project still has its weaknesses in some places, because it has been develop
 If there are bugs, just create an [issue on Github](https://github.com/laurence-trippen/Afanasy-Pools-Support/issues).
 
 ## How does it works?
-The implementation consists of three important components:
+The implementation consists of four important components:
 
 #### 1. MongoDB database
 All pools and their associated clients are stored in the MongoDB database.
@@ -27,11 +27,28 @@ Clients can also be added to or removed from these pools.
 #### 3. Pool selection at job submssion
 In CGRU, render jobs can be sent to the server in various ways.
 Until now it is planned that pools can be specified in the [AfStarter](http://cgru.info/afstarter) and [Blender plugin](http://cgru.info/software/blender).
-These plugins and programs also access the MongoDB database.
+These plugins and programs also access the MongoDB database directly or via. Afanasy Pool Server.
+
+#### 4. Afanasy Pool Server
+The Afanasy Pool Server is for plugins that **cannot directly access the MongoDB database**, but can establish a network connection.
+
+For example, Blender provides Python to create plugins.
+To access the MongoDB **(Pool Database)** with Blender Python you need the Python Module PyMongo. Since it is very difficult to install the module on a RenderFarm on every computer in Blender, the Afanasy Pool Server offers an easy way to access the pool data.
+
+The server acts as a mediator between MongoDB and the plugins.
+
+Most plugin environments of 3D programs allow the establishment of network connections.
+
+The Afanasy Pool Server, is a simple [TCP](https://en.wikipedia.org/wiki/Transmission_Control_Protocol) server that offers a simple **request/response protocol** like HTTP. The protocol is **stateless** and is closed after each response.
+
+The data is sent **unencrypted** as text over the network.
+Since most render farms are in the local network, this should not be a problem.
+
+But for the future **SSL/TSL** support is planned.
 
 ### Structure as Schema
 
-![](https://github.com/laurence-trippen/Afanasy-Pools-Support/blob/master/Preview/plan.jpg?raw=true)
+![](https://github.com/laurence-trippen/Afanasy-Pools-Support/blob/master/Preview/planv2.jpg?raw=true)
 
 ### Pool emulation by hosts exclude mask.
 
@@ -70,6 +87,11 @@ def get_excluded_hostnames(all_renderfarm_hostnames, pool_hostnames):
   return excluded_hostnames
 ```
 
+## Software Integration
+<a href="https://www.blender.org/">
+<img src="https://github.com/laurence-trippen/Afanasy-Pools-Support/blob/master/Preview/blender.png" width="100">
+</a>
+
 ## Features & Future plans
 
 * [x] Pool Manager is startable from Keeper.
@@ -80,7 +102,10 @@ def get_excluded_hostnames(all_renderfarm_hostnames, pool_hostnames):
 * [x] PyMongo installation script for afanasy's embedded Python.
 * [x] Blender plugin pool integration.
 * [x] AfStarter pool integration.
-* [ ] Offline PyMongo installation for Blender and Afanasy.
+* [ ] Natron pool integration.
+* [ ] Fusion pool integration.
+* [x] Pool Server implementation. (PyMongo is no longer needed in plugins.)
+* [ ] Pool Server SSL/TSL Support
 * [ ] Easy installation
 
 ## Installation
