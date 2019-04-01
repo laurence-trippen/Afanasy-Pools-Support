@@ -286,11 +286,14 @@ def compute_excluded_hosts(all_clients, pool_clients):
     return excluded
 
 def getHostsMaskExclude():
-    af_hostnames = get_afanasy_hostnames()
-    included_hostnames = get_selected_pool_hostnames()
-    excluded_hostnames = compute_excluded_hosts(af_hostnames, included_hostnames)
-    regex_mask = ""
-    for excluded_host in excluded_hostnames:
-        regex_mask += excluded_host + "|"
-    regex_mask = regex_mask[:-1]
-    return regex_mask
+    if CGRU_Submit.selected_pool != "Don't use pool.":
+        af_hostnames = get_afanasy_hostnames()
+        included_hostnames = get_selected_pool_hostnames()
+        excluded_hostnames = compute_excluded_hosts(af_hostnames, included_hostnames)
+        regex_mask = ""
+        for excluded_host in excluded_hostnames:
+            regex_mask += excluded_host + "|"
+        regex_mask = regex_mask[:-1]
+        return regex_mask
+    else:
+        return ""
