@@ -1170,6 +1170,7 @@ class Cmd:
 
 # -------------- Pools code addition ----------------
 import pymongo
+import socket
 
 class MongoDB():
     POOLS_DATABSE       = "afpools"
@@ -1198,15 +1199,41 @@ class MongoDB():
 
 class PoolsSupportAPI():
     pools = None
+
+    ''' deprecated
     @staticmethod
-    def getPools(config):
+    def get_pools_mongodb_call(config):
         MongoDB.connection = MongoDB()
         MongoDB.connection.connect("mongodb://" + config["host"]  + ":" + str(config["port"]))
         pools = MongoDB.connection.findAllPools()
         PoolsSupportAPI.pools = pools
-        poolset = {("- Don't use pool. -", "- Don't use pool. -", "- Don't use pool. -")}
+        poolset = {("Don't use pool.", "Don't use pool.", "Don't use pool.")}
         for pool in pools:
             name = pool["name"]
             pool_tuple_item = (name, name, name)
             poolset.add(pool_tuple_item)
         return poolset
+    '''
+    
+    @staticmethod
+    def get_pools_poolserver_call(config):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+            ip = "127.0.0.1" if config["ip"] == "" else config["ip"]
+            sock.connect((ip, config["port"]))
+            sock.sendall(json.dumps({"type":"request", "command":"GET POOLS"}).encode("utf-8"))
+            data = sock.recv(1024)
+            if data:
+                msg = json.loads(data.decode("utf-8"))
+                if msg["type"] == "response":
+                    size = msg["size"]
+                    data = sock.recv(size)
+                    if data:
+                        response = data.decode("utf-8")
+                        pools = json.loads(response)
+                        PoolsSupportAPI.pools = pools
+                        poolset = {("Don't use pool.", "Don't use pool.", "Don't use pool.")}
+                        for pool in pools:
+                            name = pool["name"]
+                            pool_tuple_item = (name, name, name)
+                            poolset.add(pool_tuple_item)
+                        return poolset

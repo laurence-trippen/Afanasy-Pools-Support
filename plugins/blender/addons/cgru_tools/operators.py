@@ -257,6 +257,8 @@ class CGRU_Submit(bpy.types.Operator):
 
         return {'FINISHED'}
 
+# ------- Pools Support code addition --------------
+
 def get_afanasy_hostnames():
     import af
     hostnames = []

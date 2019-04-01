@@ -50,7 +50,10 @@ def get_movie_codecs(self, context):
 
     return codecs
 
-def get_afpools_config():
+# --------------Pools Support code additon ------------------
+
+# Loads poolmanagers mongodb config.
+def get_poolssupport_mongodb_config():
     path = os.path.join(os.environ["CGRU_LOCATION"], "utilities", "poolssupport", "poolmanager", "config.json")
     config = {
         "host":"localhost",
@@ -60,4 +63,17 @@ def get_afpools_config():
         data = json.load(json_file)
         config["host"] = data["mongodb_host"]
         config["port"] = data["mongodb_port"]
+    return config
+
+# Loads poolserver configuration.
+def get_poolserver_config():
+    path = os.path.join(os.environ["CGRU_LOCATION"], "utilities", "poolssupport", "poolserver", "config.json")
+    config = {
+        "ip":"",
+        "port":9999
+    }
+    with open(path) as json_file:
+        data = json.load(json_file)
+        config["ip"] = data["ip"]
+        config["port"] = data["port"]
     return config
