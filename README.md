@@ -70,6 +70,9 @@ def get_excluded_hostnames(all_renderfarm_hostnames, pool_hostnames):
   return excluded_hostnames
 ```
 
+## Software Integration
+![](https://github.com/laurence-trippen/Afanasy-Pools-Support/blob/master/Preview/blender.png =100x89)
+
 ## Features & Future plans
 
 * [x] Pool Manager is startable from Keeper.
@@ -80,7 +83,7 @@ def get_excluded_hostnames(all_renderfarm_hostnames, pool_hostnames):
 * [x] PyMongo installation script for afanasy's embedded Python.
 * [x] Blender plugin pool integration.
 * [x] AfStarter pool integration.
-* [ ] Offline PyMongo installation for Blender and Afanasy.
+* [x] Pool Server implementation. (PyMongo is no longer needed in plugins.)
 * [ ] Easy installation
 
 ## Installation
