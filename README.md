@@ -71,7 +71,7 @@ def get_excluded_hostnames(all_renderfarm_hostnames, pool_hostnames):
 ```
 
 ## Software Integration
-![](https://github.com/laurence-trippen/Afanasy-Pools-Support/blob/master/Preview/blender.png =100x89)
+<img src="https://github.com/laurence-trippen/Afanasy-Pools-Support/blob/master/Preview/blender.png" align="right" width="100" />
 
 ## Features & Future plans
 
