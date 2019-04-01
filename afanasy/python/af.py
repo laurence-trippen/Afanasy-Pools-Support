@@ -1169,8 +1169,9 @@ class Cmd:
         return self.renderGetList(cgruconfig.VARS['HOSTNAME'])
 
 # -------------- Pools code addition ----------------
+
+''' deprecated
 import pymongo
-import socket
 
 class MongoDB():
     POOLS_DATABSE       = "afpools"
@@ -1196,6 +1197,9 @@ class MongoDB():
         for pool in self.pools_col.find():
             pools.append(pool)
         return pools
+'''
+
+import socket
 
 class PoolsSupportAPI():
     pools = None
