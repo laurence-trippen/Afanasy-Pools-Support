@@ -39,10 +39,9 @@ The server acts as a mediator between MongoDB and the plugins.
 
 Most plugin environments of 3D programs allow the establishment of network connections.
 
-**Tech:**
-The Afanasy Pool Server, is a simple [TCP](https://en.wikipedia.org/wiki/Transmission_Control_Protocol) server that offers a simple request/response protocol like HTTP. The protocol is stateless and is closed after each response.
+The Afanasy Pool Server, is a simple [TCP](https://en.wikipedia.org/wiki/Transmission_Control_Protocol) server that offers a simple **request/response protocol** like HTTP. The protocol is **stateless** and is closed after each response.
 
-The data is sent unencrypted as text over the network.
+The data is sent **unencrypted** as text over the network.
 Since most render farms are in the local network, this should not be a problem.
 
 But for the future **SSL/TSL** support is planned.
