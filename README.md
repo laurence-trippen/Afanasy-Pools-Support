@@ -105,6 +105,7 @@ def get_excluded_hostnames(all_renderfarm_hostnames, pool_hostnames):
 * [ ] Natron pool integration.
 * [ ] Fusion pool integration.
 * [x] Pool Server implementation. (PyMongo is no longer needed in plugins.)
+* [x] Pool Server simple configurator.
 * [ ] Pool Server SSL/TSL Support
 * [ ] Easy installation
 
