@@ -94,20 +94,27 @@ def get_excluded_hostnames(all_renderfarm_hostnames, pool_hostnames):
 
 ## Features & Future plans
 
+#### General
+* [ ] Easy installation
+* [x] PyMongo installation script for afanasy's embedded Python.
+
+#### Pool Manager
 * [x] Pool Manager is startable from Keeper.
 * [x] Create, Edit, Delete pools.
 * [x] Add/Remove clients to pools.
 * [x] Add online and offline afanasy clients to pool.
 * [x] Network scan
-* [x] PyMongo installation script for afanasy's embedded Python.
+
+#### Software integration
 * [x] Blender plugin pool integration.
 * [x] AfStarter pool integration.
 * [ ] Natron pool integration.
 * [ ] Fusion pool integration.
+
+#### Pool server
 * [x] Pool Server implementation. (PyMongo is no longer needed in plugins.)
 * [x] Pool Server simple configurator.
-* [ ] Pool Server SSL/TSL Support
-* [ ] Easy installation
+* [ ] Pool Server SSL/TSL Support.
 
 ## Installation
 Coming soon.
