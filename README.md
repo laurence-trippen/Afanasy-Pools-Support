@@ -44,7 +44,7 @@ The Afanasy Pool Server, is a simple [TCP](https://en.wikipedia.org/wiki/Transmi
 The data is sent **unencrypted** as text over the network.
 Since most render farms are in the local network, this should not be a problem.
 
-But for the future **SSL/TSL** support is planned.
+But for the future **SSL/TLS** support is planned.
 
 ### Structure as Schema
 
