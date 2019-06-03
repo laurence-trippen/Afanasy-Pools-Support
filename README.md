@@ -114,7 +114,7 @@ def get_excluded_hostnames(all_renderfarm_hostnames, pool_hostnames):
 #### Pool server
 * [x] Pool Server implementation. (PyMongo is no longer needed in plugins.)
 * [x] Pool Server simple configurator.
-* [ ] Pool Server SSL/TSL Support.
+* [ ] Pool Server SSL/TLS Support.
 
 ## Installation
 Coming soon.
